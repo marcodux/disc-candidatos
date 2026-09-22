@@ -65,6 +65,12 @@ const DB = {
       const r = await fetch(supa(table), { method:"POST", headers, body:JSON.stringify(rows) });
       return r.ok;
     } catch { return false; }
+  },
+  async updateByField(table, field, value, data) {
+    try {
+      const r = await fetch(`${supa(table)}?${field}=eq.${encodeURIComponent(value)}`, { method:"PATCH", headers, body:JSON.stringify(data) });
+      return r.ok;
+    } catch { return false; }
   }
 };
 
@@ -1962,6 +1968,33 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
+  const handleExport = () => {
+    const perfilLabel = (c) => {
+      if (c._displayType!=="temperamento" && c.perfil && DISC_PROFILES[c.perfil]) return `${c.perfil} - ${DISC_PROFILES[c.perfil].name}`;
+      if (c._displayType!=="disc" && c.perfil_temperamento && TEMPERAMENTO_PROFILES[c.perfil_temperamento]) return TEMPERAMENTO_PROFILES[c.perfil_temperamento].nome;
+      return "";
+    };
+    const testeLabel = (c) => c._displayType==="ambos"?"DISC + Temperamento":c._displayType==="temperamento"?"Temperamento":"DISC";
+    const header = "Nome;CPF;E-mail;Empresa;Vaga;Teste;Perfil;Status;Criado em;Respondido em\n";
+    const rows = displayRows.map(c => {
+      const vals = [
+        c.name||"", c.cpf?formatCpf(c.cpf):"", c.email||"", c.empresa||"", c.vaga||"",
+        testeLabel(c), perfilLabel(c), c.status||"", fmtDate(c.created_at), c.answered_at?fmtDate(c.answered_at):""
+      ];
+      return vals.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";");
+    }).join("\n");
+    const csv = "\uFEFF" + header + rows;
+    const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `candidatos_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
       <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8 }}>
@@ -1969,7 +2002,10 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
           <div style={pageTitle}>Candidatos</div>
           <div style={pageSub}>Gere links, acompanhe status e veja os resultados</div>
         </div>
-        <button style={btnP} onClick={()=>setShowNew(true)}>+ Gerar Link</button>
+        <div style={{ display:"flex",gap:10 }}>
+          <button style={btnO} onClick={handleExport}>Exportar CSV</button>
+          <button style={btnP} onClick={()=>setShowNew(true)}>+ Gerar Link</button>
+        </div>
       </div>
       {msg && <div style={okBox}>{msg}</div>}
       <div style={{ marginBottom:20,display:"flex",gap:12,flexWrap:"wrap",alignItems:"center" }}>
@@ -2473,6 +2509,94 @@ const UsersPage = ({ users, onRefresh, isAdmin }) => {
 };
 
 // ============================================================
+// MODAL: RENAME VAGA
+// ============================================================
+const RenameVagaModal = ({ vagaAtual, qtd, onClose, onSave }) => {
+  const [novoNome, setNovoNome] = useState(vagaAtual);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!novoNome.trim()) { setError("Informe o nome da vaga"); return; }
+    if (novoNome.trim() === vagaAtual) { onClose(); return; }
+    setSaving(true);
+    const ok = await DB.updateByField("candidates", "vaga", vagaAtual, { vaga: novoNome.trim() });
+    setSaving(false);
+    if (!ok) { setError("Não foi possível salvar. Tente novamente."); return; }
+    onSave();
+  };
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Renomear Vaga</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:24 }}>Isso atualiza o nome em <strong>{qtd}</strong> candidato{qtd!==1?"s":""} que já usam essa vaga</div>
+      {error && <div style={errBox}>{error}</div>}
+      <label style={labelS}>Nome atual</label>
+      <div style={{ ...input,background:T.bg,color:T.textSec,cursor:"not-allowed" }}>{vagaAtual}</div>
+      <label style={labelS}>Novo nome *</label>
+      <input style={input} value={novoNome} onChange={e=>setNovoNome(e.target.value)} onFocus={focusH} onBlur={blurH} autoFocus/>
+      <div style={{ display:"flex",gap:12 }}>
+        <button style={{ ...btnO,flex:1 }} onClick={onClose}>Cancelar</button>
+        <button style={{ ...btnP,flex:1,opacity:saving?.6:1 }} onClick={handleSave} disabled={saving}>{saving?"Salvando...":"Salvar"}</button>
+      </div>
+    </Modal>
+  );
+};
+
+// ============================================================
+// PAGE: VAGAS (renomear nomenclaturas — só admin)
+// ============================================================
+const VagasPage = ({ candidates, onRefresh }) => {
+  const [renaming, setRenaming] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  const vagasCount = useMemo(() => {
+    const map = {};
+    candidates.forEach(c => {
+      if (!c.vaga) return;
+      map[c.vaga] = (map[c.vaga]||0) + 1;
+    });
+    return Object.entries(map).map(([vaga,total])=>({ vaga,total })).sort((a,b)=>a.vaga.localeCompare(b.vaga));
+  }, [candidates]);
+
+  return (
+    <div>
+      <div style={pageTitle}>Vagas</div>
+      <div style={pageSub}>Ajuste a nomenclatura das vagas cadastradas — a mudança aplica em todos os candidatos que usam esse nome</div>
+      {msg && <div style={{ ...okBox,marginTop:20 }}>{msg}</div>}
+      <div style={{ ...card,padding:0,overflow:"hidden",marginTop:20 }}>
+        {vagasCount.length === 0 ? (
+          <div style={{ padding:"40px 20px",textAlign:"center",color:T.textMut }}>Nenhuma vaga cadastrada ainda.</div>
+        ) : (
+          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0 }}>
+            <thead><tr><th style={thS}>Vaga</th><th style={thS}>Candidatos</th><th style={{ ...thS,textAlign:"right" }}>Ações</th></tr></thead>
+            <tbody>
+              {vagasCount.map(v => (
+                <tr key={v.vaga}>
+                  <td style={{ ...tdS,fontWeight:500 }}>{v.vaga}</td>
+                  <td style={tdS}>{v.total}</td>
+                  <td style={{ ...tdS,textAlign:"right" }}>
+                    <button style={btnSm} onClick={()=>setRenaming(v)} title="Renomear"><Icon name="edit" size={14}/></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {renaming && (
+        <RenameVagaModal
+          vagaAtual={renaming.vaga}
+          qtd={renaming.total}
+          onClose={()=>setRenaming(null)}
+          onSave={()=>{ setRenaming(null); setMsg("Vaga renomeada com sucesso!"); onRefresh(); setTimeout(()=>setMsg(""),3000); }}
+        />
+      )}
+    </div>
+  );
+};
+
+// ============================================================
 // MAIN APP
 // ============================================================
 export default function App() {
@@ -2528,6 +2652,7 @@ export default function App() {
     { id:"candidates",label:"Candidatos",icon:"people" },
     { id:"analysis",label:"Análise DISC",icon:"chart" },
     { id:"analysisTemp",label:"Análise Temperamento",icon:"chart" },
+    ...(isAdmin?[{ id:"vagas",label:"Vagas",icon:"edit" }]:[]),
     ...(isAdmin?[{ id:"users",label:"Usuários",icon:"users" }]:[]),
   ];
 
@@ -2562,6 +2687,7 @@ export default function App() {
           {page==="candidates" && <CandidatesPage candidates={candidates} onRefresh={loadAll} currentUser={currentUser} isAdmin={isAdmin}/>}
           {page==="analysis" && <AnalysisDiscPage candidates={candidates}/>}
           {page==="analysisTemp" && <AnalysisTemperamentoPage candidates={candidates}/>}
+          {page==="vagas" && isAdmin && <VagasPage candidates={candidates} onRefresh={loadAll}/>}
           {page==="users" && isAdmin && <UsersPage users={users} onRefresh={loadAll} isAdmin={isAdmin}/>}
         </div>
       </div>
