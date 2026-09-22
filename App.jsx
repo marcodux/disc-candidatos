@@ -742,6 +742,7 @@ const downloadResultDocument = (candidate, result) => {
     <meta charset="utf-8"/>
     <style>
       body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
+      *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
       h1{font-size:22px;margin-bottom:4px;}
       .sub{color:#6B6B6B;font-size:13px;margin-bottom:24px;}
       .info{background:#F7F5F2;border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.8;}
@@ -1085,14 +1086,12 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
 };
 
 // ============================================================
-// PAGE: USERS (RH team)
-// ============================================================
-// ============================================================
 // PAGE: ANALYSIS
 // ============================================================
 const AnalysisPage = ({ candidates }) => {
   const [periodFrom, setPeriodFrom] = useState("");
   const [periodTo, setPeriodTo] = useState("");
+  const [cargoDetail, setCargoDetail] = useState(null);
 
   const respondidos = useMemo(() => {
     return candidates.filter(c => {
@@ -1122,6 +1121,18 @@ const AnalysisPage = ({ candidates }) => {
     return ["D","I","S","C"].map(k => ({ perfil:k, total:map[k] }));
   }, [respondidos]);
 
+  const byCargo = useMemo(() => {
+    const map = {};
+    respondidos.forEach(c => {
+      const v = c.vaga || "Sem vaga informada";
+      if (!map[v]) map[v] = { total:0, perfis:{D:0,I:0,S:0,C:0} };
+      map[v].total++;
+      if (c.perfil && map[v].perfis[c.perfil]!==undefined) map[v].perfis[c.perfil]++;
+    });
+    return Object.entries(map).map(([vaga,data])=>({ vaga,total:data.total,perfis:data.perfis })).sort((a,b)=>b.total-a.total);
+  }, [respondidos]);
+
+  const maxCargo = Math.max(1, ...byCargo.map(c=>c.total));
   const maxEmpresa = Math.max(1, ...byEmpresa.map(e=>e.total));
   const maxPerfil = Math.max(1, ...byPerfil.map(p=>p.total));
 
@@ -1190,6 +1201,58 @@ const AnalysisPage = ({ candidates }) => {
           )}
         </div>
       </div>
+
+      <div style={{ marginTop:20 }}>
+        <div style={card}>
+          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20 }}>
+            <div style={{ fontSize:16,fontWeight:600 }}>Respostas por Cargo</div>
+            <span style={{ display:"inline-block",padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:T.primaryLight,color:T.primary }}>{respondidos.length} teste{respondidos.length!==1?"s":""}</span>
+          </div>
+          <div style={{ fontSize:12,color:T.textMut,marginBottom:16 }}>Clique na quantidade para ver o detalhamento por perfil daquele cargo</div>
+          {byCargo.length === 0 ? (
+            <div style={{ color:T.textMut,fontSize:14 }}>Nenhum teste respondido no período.</div>
+          ) : (
+            <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
+              {byCargo.map((c,i) => (
+                <div key={i}>
+                  <div style={{ display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:4 }}>
+                    <span style={{ color:T.text,fontWeight:500 }}>{c.vaga}</span>
+                    <span onClick={()=>setCargoDetail(c)} style={{ color:T.primary,fontFamily:T.mono,fontWeight:700,cursor:"pointer",textDecoration:"underline" }}>{c.total}</span>
+                  </div>
+                  <div style={{ height:8,background:T.bg,borderRadius:4,overflow:"hidden" }}>
+                    <div style={{ height:"100%",width:`${(c.total/maxCargo)*100}%`,background:T.primary,borderRadius:4,transition:"width .3s" }}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {cargoDetail && (
+        <Modal onClose={()=>setCargoDetail(null)}>
+          <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>{cargoDetail.vaga}</div>
+          <div style={{ fontSize:13,color:T.textSec,marginBottom:24 }}>{cargoDetail.total} teste{cargoDetail.total!==1?"s":""} respondido{cargoDetail.total!==1?"s":""} — detalhamento por perfil</div>
+          <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
+            {["D","I","S","C"].map(k => {
+              const total = cargoDetail.perfis[k]||0;
+              const maxP = Math.max(1, ...Object.values(cargoDetail.perfis));
+              return (
+                <div key={k}>
+                  <div style={{ display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:4 }}>
+                    <span style={{ color:T.text,fontWeight:500 }}>{k} — {DISC_PROFILES[k].name}</span>
+                    <span style={{ color:T.textSec,fontFamily:T.mono }}>{total}</span>
+                  </div>
+                  <div style={{ height:8,background:T.bg,borderRadius:4,overflow:"hidden" }}>
+                    <div style={{ height:"100%",width:`${(total/maxP)*100}%`,background:DISC_PROFILES[k].color,borderRadius:4,transition:"width .3s" }}/>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ marginTop:24,textAlign:"right" }}><button style={btnO} onClick={()=>setCargoDetail(null)}>Fechar</button></div>
+        </Modal>
+      )}
     </div>
   );
 };
