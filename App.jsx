@@ -1087,6 +1087,113 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
 // ============================================================
 // PAGE: USERS (RH team)
 // ============================================================
+// ============================================================
+// PAGE: ANALYSIS
+// ============================================================
+const AnalysisPage = ({ candidates }) => {
+  const [periodFrom, setPeriodFrom] = useState("");
+  const [periodTo, setPeriodTo] = useState("");
+
+  const respondidos = useMemo(() => {
+    return candidates.filter(c => {
+      if (c.status !== "Respondido") return false;
+      const data = c.answered_at ? c.answered_at.slice(0,10) : null;
+      if (periodFrom && (!data || data < periodFrom)) return false;
+      if (periodTo && (!data || data > periodTo)) return false;
+      return true;
+    });
+  }, [candidates, periodFrom, periodTo]);
+
+  const byEmpresa = useMemo(() => {
+    const map = {};
+    EMPRESAS_DUX.forEach(e => { map[e] = 0; });
+    respondidos.forEach(c => {
+      const e = c.empresa || "Sem empresa";
+      map[e] = (map[e]||0) + 1;
+    });
+    return Object.entries(map).map(([empresa,total])=>({ empresa,total })).sort((a,b)=>b.total-a.total);
+  }, [respondidos]);
+
+  const byPerfil = useMemo(() => {
+    const map = { D:0, I:0, S:0, C:0 };
+    respondidos.forEach(c => {
+      if (c.perfil && map[c.perfil]!==undefined) map[c.perfil]++;
+    });
+    return ["D","I","S","C"].map(k => ({ perfil:k, total:map[k] }));
+  }, [respondidos]);
+
+  const maxEmpresa = Math.max(1, ...byEmpresa.map(e=>e.total));
+  const maxPerfil = Math.max(1, ...byPerfil.map(p=>p.total));
+
+  return (
+    <div>
+      <div style={pageTitle}>Análise</div>
+      <div style={pageSub}>Volume de testes respondidos por empresa e por perfil</div>
+
+      <div style={{ display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginTop:20,marginBottom:24 }}>
+        <span style={{ fontSize:13,fontWeight:600,color:T.textSec }}>Período:</span>
+        <input type="date" style={{ ...input,marginBottom:0,width:"auto",padding:"8px 12px",fontSize:13 }} value={periodFrom} onChange={e=>setPeriodFrom(e.target.value)} onFocus={focusH} onBlur={blurH}/>
+        <span style={{ fontSize:13,color:T.textMut }}>até</span>
+        <input type="date" style={{ ...input,marginBottom:0,width:"auto",padding:"8px 12px",fontSize:13 }} value={periodTo} onChange={e=>setPeriodTo(e.target.value)} onFocus={focusH} onBlur={blurH}/>
+        {(periodFrom || periodTo) && (
+          <button style={btnSm} onClick={()=>{setPeriodFrom("");setPeriodTo("");}}>Limpar período</button>
+        )}
+        <span style={{ fontSize:12,color:T.textMut }}>{respondidos.length} teste{respondidos.length!==1?"s":""} respondido{respondidos.length!==1?"s":""} no período</span>
+      </div>
+
+      <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(320px,1fr))",gap:20 }}>
+        <div style={card}>
+          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20 }}>
+            <div style={{ fontSize:16,fontWeight:600 }}>Respostas por Empresa</div>
+            <span style={{ display:"inline-block",padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:T.primaryLight,color:T.primary }}>{respondidos.length} teste{respondidos.length!==1?"s":""}</span>
+          </div>
+          {byEmpresa.every(e=>e.total===0) ? (
+            <div style={{ color:T.textMut,fontSize:14 }}>Nenhum teste respondido no período.</div>
+          ) : (
+            <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
+              {byEmpresa.map((e,i) => (
+                <div key={i}>
+                  <div style={{ display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:4 }}>
+                    <span style={{ color:T.text,fontWeight:500 }}>{e.empresa}</span>
+                    <span style={{ color:T.textSec,fontFamily:T.mono }}>{e.total}</span>
+                  </div>
+                  <div style={{ height:8,background:T.bg,borderRadius:4,overflow:"hidden" }}>
+                    <div style={{ height:"100%",width:`${(e.total/maxEmpresa)*100}%`,background:(classifColors[e.empresa]?.color)||T.primary,borderRadius:4,transition:"width .3s" }}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div style={card}>
+          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20 }}>
+            <div style={{ fontSize:16,fontWeight:600 }}>Respostas por Perfil (o que mais descreve)</div>
+            <span style={{ display:"inline-block",padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:T.primaryLight,color:T.primary }}>{respondidos.length} teste{respondidos.length!==1?"s":""}</span>
+          </div>
+          {byPerfil.every(p=>p.total===0) ? (
+            <div style={{ color:T.textMut,fontSize:14 }}>Nenhum teste respondido no período.</div>
+          ) : (
+            <div style={{ display:"flex",flexDirection:"column",gap:14 }}>
+              {byPerfil.map((p,i) => (
+                <div key={i}>
+                  <div style={{ display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:4 }}>
+                    <span style={{ color:T.text,fontWeight:500 }}>{p.perfil} — {DISC_PROFILES[p.perfil].name}</span>
+                    <span style={{ color:T.textSec,fontFamily:T.mono }}>{p.total}</span>
+                  </div>
+                  <div style={{ height:8,background:T.bg,borderRadius:4,overflow:"hidden" }}>
+                    <div style={{ height:"100%",width:`${(p.total/maxPerfil)*100}%`,background:DISC_PROFILES[p.perfil].color,borderRadius:4,transition:"width .3s" }}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const UsersPage = ({ users, onRefresh, isAdmin }) => {
   const [showNew, setShowNew] = useState(false);
   const [editUser, setEditUser] = useState(null);
@@ -1175,6 +1282,7 @@ export default function App() {
   const navItems = [
     { id:"dashboard",label:"Dashboard",icon:"home" },
     { id:"candidates",label:"Candidatos",icon:"people" },
+    { id:"analysis",label:"Análise",icon:"chart" },
     ...(isAdmin?[{ id:"users",label:"Usuários",icon:"users" }]:[]),
   ];
 
@@ -1207,6 +1315,7 @@ export default function App() {
         <div style={{ flex:1,padding:"40px 48px",overflowY:"auto",maxHeight:"100vh",boxSizing:"border-box" }}>
           {page==="dashboard" && <DashboardPage candidates={candidates}/>}
           {page==="candidates" && <CandidatesPage candidates={candidates} onRefresh={loadAll} currentUser={currentUser} isAdmin={isAdmin}/>}
+          {page==="analysis" && <AnalysisPage candidates={candidates}/>}
           {page==="users" && isAdmin && <UsersPage users={users} onRefresh={loadAll} isAdmin={isAdmin}/>}
         </div>
       </div>
