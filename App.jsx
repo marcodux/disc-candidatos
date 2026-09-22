@@ -353,8 +353,17 @@ const CandidateTestPublic = ({ invite }) => {
     const scoresMenos = calcScores("menos");
     const perfilMais = getWinner(scoresMais);
     const perfilMenos = getWinner(scoresMenos);
-    await DB.update("candidates", invite.id, { name:name.trim(), cpf:cleanCpf(cpf), email:email.trim(), status:"Respondido", answered_at:new Date().toISOString() });
-    await DB.insert("disc_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), scores_mais:scoresMais, scores_menos:scoresMenos, perfil_mais:perfilMais, perfil_menos:perfilMenos });
+    const answersDetail = questions.map(qq => {
+      const a = answers[qq.id] || {mais:null,menos:null};
+      return {
+        id: qq.id,
+        opcoes: qq.options.map(o=>({ palavra:o.word, tipo:o.type })),
+        mais: a.mais!==null&&a.mais!==undefined ? { palavra:qq.options[a.mais].word, tipo:qq.options[a.mais].type } : null,
+        menos: a.menos!==null&&a.menos!==undefined ? { palavra:qq.options[a.menos].word, tipo:qq.options[a.menos].type } : null,
+      };
+    });
+    await DB.update("candidates", invite.id, { name:name.trim(), cpf:cleanCpf(cpf), email:email.trim(), status:"Respondido", answered_at:new Date().toISOString(), perfil:perfilMais });
+    await DB.insert("disc_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), scores_mais:scoresMais, scores_menos:scoresMenos, perfil_mais:perfilMais, perfil_menos:perfilMenos, answers:answersDetail });
     setResultData({ scoresMais, scoresMenos, perfilMais, perfilMenos });
     setSaving(false);
     setStep("done");
@@ -372,11 +381,12 @@ const CandidateTestPublic = ({ invite }) => {
         <div style={{ maxWidth:640,margin:"0 auto" }}>
           <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
             <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
-            <div style={{ fontSize:26,fontWeight:800,fontFamily:"'Playfair Display',serif",marginBottom:8 }}>Agradecemos a sua participação no nosso teste!</div>
+            <div style={{ fontSize:26,fontWeight:800,fontFamily:"'Playfair Display',serif",marginBottom:8 }}>Agradecemos a sua participação no nosso processo seletivo!</div>
             <div style={{ color:"#6B6B6B",fontSize:15,lineHeight:1.6 }}>Nossa equipe de Recrutamento e Seleção vai analisar seu perfil e entrará em contato em breve.</div>
           </div>
 
-          <div style={{ display:"flex",justifyContent:"center",gap:8,margin:"20px 0" }}>
+          <div style={{ textAlign:"center",fontSize:13,fontWeight:600,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginTop:30 }}>Resultado do teste de perfil</div>
+          <div style={{ display:"flex",justifyContent:"center",gap:8,margin:"12px 0 20px" }}>
             {["mais","menos"].map(v => (
               <button key={v} onClick={()=>setResultView(v)} style={{ padding:"10px 24px",borderRadius:10,border:`2px solid ${resultView===v?"#2C2C2C":"#E8E4DF"}`,background:resultView===v?"#2C2C2C":"#FFF",color:resultView===v?"#FFF":"#6B6B6B",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer" }}>
                 {v==="mais"?"O que mais te descreve":"O que menos te descreve"}
@@ -625,7 +635,7 @@ const UserModal = ({ onClose, onSave, editUser }) => {
 // ============================================================
 // MODAL: NEW CANDIDATE (generate link)
 // ============================================================
-const NewCandidateModal = ({ onClose, onSave, currentUser }) => {
+const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) => {
   const [vaga, setVaga] = useState("");
   const [empresa, setEmpresa] = useState("");
   const [error, setError] = useState("");
@@ -670,7 +680,10 @@ const NewCandidateModal = ({ onClose, onSave, currentUser }) => {
             {EMPRESAS_DUX.map(e => <option key={e} value={e}>{e}</option>)}
           </select>
           <label style={labelS}>Vaga (opcional)</label>
-          <input style={input} placeholder="Ex: Analista de Logística" value={vaga} onChange={e=>setVaga(e.target.value)} onFocus={focusH} onBlur={blurH}/>
+          <input style={input} list="vagas-datalist" placeholder="Selecione uma vaga existente ou digite uma nova" value={vaga} onChange={e=>setVaga(e.target.value)} onFocus={focusH} onBlur={blurH}/>
+          <datalist id="vagas-datalist">
+            {(vagasExistentes||[]).map(v => <option key={v} value={v}/>)}
+          </datalist>
           <div style={{ display:"flex",gap:12 }}>
             <button style={{ ...btnO,flex:1 }} onClick={onClose}>Cancelar</button>
             <button style={{ ...btnP,flex:1,opacity:saving?.6:1 }} onClick={handleCreate} disabled={saving}>{saving?"Gerando...":"Gerar Link"}</button>
@@ -695,6 +708,118 @@ const NewCandidateModal = ({ onClose, onSave, currentUser }) => {
 // ============================================================
 // MODAL: VIEW RESULT
 // ============================================================
+// ============================================================
+// HELPER: DOWNLOAD RESULT AS DOCUMENT (via print)
+// ============================================================
+const discColorsMap = {D:"#C0392B",I:"#F39C12",S:"#27AE60",C:"#2980B9"};
+
+const downloadResultDocument = (candidate, result) => {
+  const w = window.open("", "_blank");
+  if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
+  const buildProfileBlock = (view) => {
+    const scores = view==="mais" ? result.scores_mais : result.scores_menos;
+    const winner = view==="mais" ? result.perfil_mais : result.perfil_menos;
+    const prof = DISC_PROFILES[winner];
+    const bars = ["D","I","S","C"].map(k => `
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:0 14px;">
+        <div style="width:34px;height:80px;background:#F1EEE9;border-radius:8px;position:relative;overflow:hidden;border:1px solid #E5E0D8;">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:${(scores[k]/25)*100}%;background:${discColorsMap[k]};"></div>
+        </div>
+        <div style="font-weight:700;font-size:13px;color:${discColorsMap[k]};">${k}</div>
+        <div style="font-weight:600;font-size:11px;color:#6B6B6B;">${scores[k]}</div>
+      </div>`).join("");
+    return `
+      <div style="border:1px solid #E5E0D8;border-radius:14px;padding:24px;margin-bottom:16px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">${view==="mais"?"O que mais o descreve":"O que menos o descreve"}</div>
+        <div style="width:60px;height:60px;border-radius:16px;background:${prof.color};display:inline-flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin-bottom:10px;">${winner}</div>
+        <div style="font-size:19px;font-weight:700;">${prof.name}</div>
+        <div style="color:#6B6B6B;font-size:12px;margin-bottom:16px;">${prof.sub}</div>
+        <div>${bars}</div>
+      </div>`;
+  };
+  w.document.write(`
+    <html><head><title>Resultado — ${candidate.name}</title>
+    <meta charset="utf-8"/>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
+      h1{font-size:22px;margin-bottom:4px;}
+      .sub{color:#6B6B6B;font-size:13px;margin-bottom:24px;}
+      .info{background:#F7F5F2;border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.8;}
+      .info b{display:inline-block;width:110px;color:#6B6B6B;}
+      @media print { body{padding:20px;} }
+    </style>
+    </head><body>
+      <h1>Resultado — Teste de Perfil Comportamental (DISC)</h1>
+      <div class="sub">Dux Logistics — Processo Seletivo</div>
+      <div class="info">
+        <div><b>Nome:</b> ${candidate.name}</div>
+        <div><b>CPF:</b> ${formatCpf(candidate.cpf)}</div>
+        <div><b>E-mail:</b> ${candidate.email}</div>
+        ${candidate.empresa?`<div><b>Empresa:</b> ${candidate.empresa}</div>`:""}
+        ${candidate.vaga?`<div><b>Vaga:</b> ${candidate.vaga}</div>`:""}
+        <div><b>Respondido em:</b> ${fmtDateTime(candidate.answered_at)}</div>
+      </div>
+      ${buildProfileBlock("mais")}
+      ${buildProfileBlock("menos")}
+    </body></html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 400);
+};
+
+// ============================================================
+// MODAL: VIEW ANSWERS (25 questions detail)
+// ============================================================
+const AnswersModal = ({ candidate, onClose }) => {
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const r = await DB.getByField("disc_results", "candidate_id", candidate.id);
+      setResult(r);
+      setLoading(false);
+    })();
+  }, [candidate.id]);
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Respostas de {candidate.name}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>As 25 respostas do teste, palavra por palavra</div>
+      {loading ? (
+        <div style={{ color:T.textMut,fontSize:14 }}>Carregando...</div>
+      ) : !result || !result.answers ? (
+        <div style={errBox}>Detalhamento de respostas não disponível para este candidato.</div>
+      ) : (
+        <div style={{ maxHeight:440,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
+          {result.answers.map((a,i) => (
+            <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
+              <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PERGUNTA {a.id}</div>
+              <div style={{ display:"flex",flexWrap:"wrap",gap:8 }}>
+                {a.opcoes.map((o,oi) => {
+                  const isMais = a.mais && a.mais.palavra===o.palavra;
+                  const isMenos = a.menos && a.menos.palavra===o.palavra;
+                  return (
+                    <span key={oi} style={{
+                      padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600,
+                      background: isMais?T.successLight:isMenos?T.dangerLight:T.bg,
+                      color: isMais?T.success:isMenos?T.danger:T.textSec,
+                      border:`1px solid ${isMais?T.success:isMenos?T.danger:T.border}`
+                    }}>
+                      {o.palavra}{isMais?" ✓ mais":isMenos?" ✗ menos":""}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{ marginTop:20,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
+    </Modal>
+  );
+};
+
 const ResultModal = ({ candidate, onClose }) => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -755,7 +880,10 @@ const ResultModal = ({ candidate, onClose }) => {
           <div style={{ fontSize:12,color:T.textMut,marginTop:16 }}>Teste respondido em {fmtDateTime(candidate.answered_at)}</div>
         </>
       )}
-      <div style={{ marginTop:24,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
+      <div style={{ marginTop:24,display:"flex",justifyContent:"flex-end",gap:12 }}>
+        {result && <button style={btnP} onClick={()=>downloadResultDocument(candidate,result)}>Baixar Resultado</button>}
+        <button style={btnO} onClick={onClose}>Fechar</button>
+      </div>
     </Modal>
   );
 };
@@ -805,18 +933,32 @@ const DashboardPage = ({ candidates }) => {
 const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
   const [showNew, setShowNew] = useState(false);
   const [viewResult, setViewResult] = useState(null);
+  const [viewAnswers, setViewAnswers] = useState(null);
   const [deleteC, setDeleteC] = useState(null);
   const [filterStatus, setFilterStatus] = useState("Todos");
   const [filterEmpresa, setFilterEmpresa] = useState("Todas");
+  const [filterVaga, setFilterVaga] = useState("Todas");
   const [search, setSearch] = useState("");
   const [msg, setMsg] = useState("");
+  const [downloadingId, setDownloadingId] = useState(null);
+
+  const vagasList = [...new Set(candidates.map(c=>c.vaga).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
 
   const filtered = candidates.filter(c => {
     if (filterStatus !== "Todos" && c.status !== filterStatus) return false;
     if (filterEmpresa !== "Todas" && c.empresa !== filterEmpresa) return false;
+    if (filterVaga !== "Todas" && c.vaga !== filterVaga) return false;
     if (search.trim() && !(c.name||"").toLowerCase().includes(search.trim().toLowerCase())) return false;
     return true;
   });
+
+  const handleDownload = async (c) => {
+    setDownloadingId(c.id);
+    const r = await DB.getByField("disc_results", "candidate_id", c.id);
+    setDownloadingId(null);
+    if (!r) { setMsg("Resultado não encontrado"); setTimeout(()=>setMsg(""),2000); return; }
+    downloadResultDocument(c, r);
+  };
 
   const handleDelete = async (c) => {
     await DB.delete("candidates", c.id);
@@ -866,6 +1008,11 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
           <option value="Todas">Todas as empresas</option>
           {EMPRESAS_DUX.map(e => <option key={e} value={e}>{e}</option>)}
         </select>
+        <select value={filterVaga} onChange={e=>setFilterVaga(e.target.value)}
+          style={{ ...select,width:"auto",minWidth:180,marginBottom:0,padding:"8px 12px",fontSize:13 }}>
+          <option value="Todas">Todas as vagas</option>
+          {vagasList.map(v => <option key={v} value={v}>{v}</option>)}
+        </select>
       </div>
       {filtered.length === 0 ? (
         <div style={{ ...card,textAlign:"center",padding:"60px 20px" }}>
@@ -875,9 +1022,9 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
       ) : (
         <div style={{ ...card,padding:0,overflow:"hidden" }}>
           <div style={{ overflowX:"auto" }}>
-          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0,minWidth:1000 }}>
+          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0,minWidth:1180 }}>
             <thead><tr>
-              <th style={thS}>Nome</th><th style={thS}>CPF</th><th style={thS}>E-mail</th><th style={thS}>Empresa</th><th style={thS}>Vaga</th><th style={thS}>Status</th><th style={thS}>Criado em</th><th style={thS}>Respondido em</th><th style={{ ...thS,textAlign:"right" }}>Ações</th>
+              <th style={thS}>Nome</th><th style={thS}>CPF</th><th style={thS}>E-mail</th><th style={thS}>Empresa</th><th style={thS}>Vaga</th><th style={thS}>Perfil</th><th style={thS}>Status</th><th style={thS}>Criado em</th><th style={thS}>Respondido em</th><th style={{ ...thS,textAlign:"right" }}>Ações</th>
             </tr></thead>
             <tbody>
               {filtered.map(c => (
@@ -887,12 +1034,24 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
                   <td style={tdS}>{c.email||"-"}</td>
                   <td style={tdS}>{c.empresa ? <span style={badge(c.empresa)}>{c.empresa}</span> : "-"}</td>
                   <td style={tdS}>{c.vaga||"-"}</td>
+                  <td style={tdS}>
+                    {c.perfil ? (
+                      <span style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px 4px 4px",borderRadius:20,background:DISC_PROFILES[c.perfil]?.color+"22",fontWeight:600,fontSize:12,color:DISC_PROFILES[c.perfil]?.color }}>
+                        <span style={{ width:20,height:20,borderRadius:6,background:DISC_PROFILES[c.perfil]?.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800 }}>{c.perfil}</span>
+                        {DISC_PROFILES[c.perfil]?.name}
+                      </span>
+                    ) : "-"}
+                  </td>
                   <td style={tdS}><span style={badge(c.status==="Respondido"?"Positivo":"Para melhorar")}>{c.status}</span></td>
                   <td style={{ ...tdS,fontSize:13,color:T.textSec }}>{fmtDate(c.created_at)}</td>
                   <td style={{ ...tdS,fontSize:13,color:T.textSec }}>{c.answered_at ? fmtDate(c.answered_at) : "-"}</td>
                   <td style={{ ...tdS,textAlign:"right",whiteSpace:"nowrap" }}>
                     {c.status==="Respondido" ? (
-                      <button style={btnSm} onClick={()=>setViewResult(c)} title="Ver resultado"><Icon name="eye" size={14}/></button>
+                      <>
+                        <button style={btnSm} onClick={()=>setViewResult(c)} title="Ver resultado"><Icon name="eye" size={14}/></button>
+                        <button style={{ ...btnSm,marginLeft:6 }} onClick={()=>setViewAnswers(c)} title="Ver respostas"><Icon name="feedback" size={14}/></button>
+                        <button style={{ ...btnSm,marginLeft:6,opacity:downloadingId===c.id?.5:1 }} onClick={()=>handleDownload(c)} disabled={downloadingId===c.id} title="Baixar resultado"><Icon name="download" size={14}/></button>
+                      </>
                     ) : (
                       <>
                         <button style={btnSm} onClick={()=>copyInviteLink(c)} title="Copiar link"><Icon name="download" size={14}/></button>
@@ -908,8 +1067,9 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
           </div>
         </div>
       )}
-      {showNew && <NewCandidateModal onClose={()=>setShowNew(false)} onSave={onRefresh} currentUser={currentUser}/>}
+      {showNew && <NewCandidateModal onClose={()=>setShowNew(false)} onSave={onRefresh} currentUser={currentUser} vagasExistentes={vagasList}/>}
       {viewResult && <ResultModal candidate={viewResult} onClose={()=>setViewResult(null)}/>}
+      {viewAnswers && <AnswersModal candidate={viewAnswers} onClose={()=>setViewAnswers(null)}/>}
       {deleteC && (
         <Modal onClose={()=>setDeleteC(null)}>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Tem certeza que quer excluir?</div>
