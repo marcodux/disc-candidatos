@@ -266,6 +266,90 @@ const DISC_PROFILES = {
 };
 
 // ============================================================
+// TEMPERAMENTO TEST DATA (Sanguíneo / Colérico / Fleumático / Melancólico)
+// ============================================================
+const TEMPERAMENTO_PARTE1 = [
+  {id:1,a:"Quando você está em um ambiente novo, você tende a explorá-lo completamente.",b:"Tende a ser receoso em novos ambientes"},
+  {id:2,a:"Quando alguém lhe ofende de forma inesperada, você já tem uma resposta.",b:"Não reage rapidamente às ofensas inesperadas."},
+  {id:3,a:"Para você, é muito fácil emitir sua opinião em meio a um grupo de \"semi-conhecidos\"",b:"Não consegue elaborar uma opinião sem se sentir muito seguro antes."},
+  {id:4,a:"Para você, a comunicação é a oportunidade de se posicionar são imprescindíveis.",b:"Você suporta por um bom tempo quando não pode se posicionar."},
+  {id:5,a:"É muito fácil toma uma atitude em ações em grupo.",b:"Possui dificuldades em tomar decisões em meio a um grupo."},
+  {id:6,a:"Você é o primeiro a se manifestar em dinâmicas de grupo.",b:"Você espera que outro dê o primeiro passo em dinâmicas de grupo."},
+  {id:7,a:"Você se sente desconfortável vivendo apenas o óbvio e o previsível.",b:"Para você, uma vida previsível e estável é mais confortável."},
+  {id:8,a:"Você possui um tom de voz elevado.",b:"Seu tom de voz é mais manso/vacilante/baixo."},
+  {id:9,a:"Você precisa se expressar constantemente.",b:"Se expressar constantemente lhe cansa muito."},
+  {id:10,a:"É muito difícil guardar para si quando não gosta de algo; logo fala.",b:"Não tem certeza  de como expressar de imediato se não gostar de algo."},
+  {id:11,a:"Não tem problema nenhum em ter assunto com as pessoas.",b:"Tem dificuldade em ter assunto com as pessoas."},
+  {id:12,a:"É considerado uma pessoa agitada.",b:"Te veem como calmo ou lento."},
+  {id:13,a:"Quer resolver tudo para ontem e agita  os que o cercam com sua agitação.",b:"Tem paciência para resolver ou, se está ansioso, não agita os outros."},
+  {id:14,a:"Sente que faz muito esforço para não ser precipitado.",b:"Sente que faz muito esforço para tomar decisões mais rápidas, pensando menos."},
+  {id:15,a:"Tende a tirar conclusões rápidas sem pensar muito.",b:"Tende a pensar demais para enfim chegar a uma conclusão."},
+  {id:16,a:"Sua presença não passa despercebida.",b:"Sua presença é naturalmente mais contida."},
+  {id:17,a:"Por você, a vida seria aventura constante e imprevisível.",b:"Por você, a vida seria previsível e totalmente segura sem desafios ou mudanças repentinas."},
+  {id:18,a:"Você tem muita facilidade em lidar com coisas, pessoas e situações.",b:"Você se sente  mais confortável dentro de si, com seus pensamentos e emoções."},
+  {id:19,a:"Novidades e desafios constantes renovam seu ânimo.",b:"Novidades e desafios constantes lhe deixam ansioso ou cansado."},
+];
+
+const TEMPERAMENTO_PARTE2 = [
+  {id:1,a:"Você tem uma visão muito flexível sobre a vida.",b:"Para você, a vida tem certos e errados muito marcados."},
+  {id:2,a:"Você se adapta com muita facilidade a novas coisas, pessoas e situações.",b:"Você possui certas dificuldade com novidades e mudanças."},
+  {id:3,a:"Você se relaciona facilmente com todos os tipos de pessoas, inclusive as que são muitos diferentes de você, sem esforço algum.",b:"Os relacionamentos costumam-se mais forçosos e espinhosos com pessoas que não pensam igual a você em assuntos que lhe são muito importantes."},
+  {id:4,a:"As emoções, lhe são muito fortes no momento dos acontecimentos, porém, não duram muito.",b:"As emoções lhe afetam por um período prolongado, precisa se esforçar para superar."},
+  {id:5,a:"Quando se lembra de coisas do passado, pode ou não se lembrar com detalhes, mas não sente nada. A lembrança é só uma lembrança.",b:"Quando se lembra de coisas do passado, a emoção é revivida intensamente, parece que aconteceu ontem ou que ainda está acontecendo."},
+  {id:6,a:"Quando toma uma decisão, leva muito em conta como aquilo vai afetar seu emocional e o emocional das outras pessoas, você priorizar a harmonia.",b:"Para você, uma decisão deve ser tomada com base na verdade, não importante o que você ou os outros vão sentir."},
+  {id:7,a:"Você naturalmente consegue flexibilizar suas decisões.",b:"Você é teimoso em suas decisões, sofre ao precisar flexibilizar."},
+  {id:8,a:"Você tende a se sentir atraído por aquilo que dá prazer ao seu físico.",b:"Você tende a se atrair por ideias complexos e ideias profundas."},
+  {id:9,a:"Quando chega em um ambiente com estímulos emocionais (uma festa, por exemplo), você se sente facilmente envolvido, comovido e atraído.",b:"Quando chegar em uma festa, você cria uma certa barreira/resistência ou julgamento."},
+  {id:10,a:"Quando combina algo, compreende facilmente quando há uma mudança.",b:"Quando combina algo, não compreende tão fácil quando algo muda e demora a aceitar."},
+  {id:11,a:"Quando opinam de forma oposta à sua, automaticamente, sem sofrimento, você entende que é natural da vida e tudo continua normal.",b:"Quando opinam de forma oposta à sua, seu interior se perturba, é difícil aceitar e , dependendo, você não consegue agir normalmente com a pessoa."},
+  {id:12,a:"A vida muda, é assim mesmo e está tudo bem!",b:"A vida muda e isso me faz sentir que não tenho controle!"},
+  {id:13,a:"A paz interior é tão importante para mim que prefiro me abster de contendas.",b:"Minha paz interior não pode sobrepor a verdade. Se tenho paz com as pessoas por meio da negação do que é certo para mim, não tenho paz!"},
+];
+
+const TEMPERAMENTO_PROFILES = {
+  Sanguineo: {
+    nome: "Sanguíneo",
+    color: "#F39C12",
+    resumo: "Extrovertido, motivador, criativo e com bastante iniciativa. Tendência a ser espontâneo, chamando atenção por onde passa.",
+    fortes: "Receptivo, alegre, otimista, domina a arte de improvisar e é motivado a fazer algo novo.",
+    fracos: "Falta de foco, pouco adaptável à rotina, desorganização, impulsividade e instabilidade.",
+    necessidades: "Busca afeto, atenção e aprovação do outro; deseja ser ouvido e apoiado.",
+  },
+  Colerico: {
+    nome: "Colérico",
+    color: "#C0392B",
+    resumo: "Líder natural, corajoso, orientado para a ação e focado em resultados. Pode apresentar comportamentos mais agressivos e explosivos.",
+    fortes: "Líder, enérgico, prático, independente, autoconfiante e avança rapidamente em busca de resultados.",
+    fracos: "Propensão ao confronto, autoritarismo e insensibilidade no contato interpessoal; tendência a tomar decisões precipitadas.",
+    necessidades: "Busca ser reconhecido pelo seu trabalho.",
+  },
+  Fleumatico: {
+    nome: "Fleumático",
+    color: "#2980B9",
+    resumo: "Calmo e equilibrado, com forte tendência à estabilidade. Prefere distanciar-se de contextos agitados, sendo mais introspectivo e reservado.",
+    fortes: "Pacífico, empático, ótimo ouvinte, valoriza a harmonia e a diplomacia. Gosta de rotina e planejamento.",
+    fracos: "Insegurança diante de mudanças e imprevistos, medo de errar, indecisão e cautela excessiva, podendo levar a um ritmo mais lento.",
+    necessidades: "Busca ambientes pacíficos; motivado a manter relacionamentos, situações e tarefas fáceis de realizar.",
+  },
+  Melancolico: {
+    nome: "Melancólico",
+    color: "#8E44AD",
+    resumo: "Sensível, introvertido, observador e bastante detalhista. Excelente habilidade analítica, produz tarefas com eficiência e organização.",
+    fortes: "Fiel e tolerante, focado na qualidade e eficiência do trabalho, análise crítica e busca por propósito de vida.",
+    fracos: "Propenso a sentimentos de tristeza e de inferioridade; dificuldade em improvisar, pois é focado em seguir regras e controlar situações.",
+    necessidades: "Busca atingir seus objetivos o mais próximo da perfeição, exatidão e credibilidade.",
+  },
+};
+
+const getTemperamentoProfile = (maioriaParte1, maioriaParte2) => {
+  if (maioriaParte1==="A" && maioriaParte2==="A") return "Sanguineo";
+  if (maioriaParte1==="A" && maioriaParte2==="B") return "Colerico";
+  if (maioriaParte1==="B" && maioriaParte2==="A") return "Fleumatico";
+  return "Melancolico";
+};
+
+
+// ============================================================
 // CPF VALIDATION
 // ============================================================
 const cleanCpf = (v) => (v || "").replace(/\D/g, "");
@@ -513,6 +597,476 @@ const CandidateTestPublic = ({ invite }) => {
 };
 
 // ============================================================
+// PUBLIC CANDIDATE TEST FLOW — TEMPERAMENTO (no login required)
+// ============================================================
+const TemperamentoTestPublic = ({ invite }) => {
+  const [step, setStep] = useState("info"); // info | test | done | error
+  const [name, setName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [currentQ, setCurrentQ] = useState(0); // 0..31 (0-18 parte1, 19-31 parte2)
+  const [answers, setAnswers] = useState({}); // key `${parte}-${id}` -> "A"|"B"
+  const [saving, setSaving] = useState(false);
+  const [resultProfile, setResultProfile] = useState(null);
+
+  const allQuestions = useMemo(() => [
+    ...TEMPERAMENTO_PARTE1.map(q => ({ ...q, parte:1 })),
+    ...TEMPERAMENTO_PARTE2.map(q => ({ ...q, parte:2 })),
+  ], []);
+  const totalQ = allQuestions.length; // 32
+
+  const handleStart = () => {
+    if (!name.trim()) { setError("Informe seu nome completo"); return; }
+    if (!isValidCpf(cpf)) { setError("CPF inválido. Confira os números digitados."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Informe um e-mail válido"); return; }
+    setError("");
+    setStep("test");
+  };
+
+  const q = allQuestions[currentQ];
+  const key = `${q.parte}-${q.id}`;
+  const answered = Object.keys(answers).length;
+
+  const selectOption = (opt) => {
+    setAnswers({ ...answers, [key]: opt });
+  };
+
+  const handleFinish = async () => {
+    setSaving(true);
+    let p1a=0,p1b=0,p2a=0,p2b=0;
+    const answersDetail = allQuestions.map(qq => {
+      const k = `${qq.parte}-${qq.id}`;
+      const escolha = answers[k];
+      if (qq.parte===1) { if (escolha==="A") p1a++; else if (escolha==="B") p1b++; }
+      else { if (escolha==="A") p2a++; else if (escolha==="B") p2b++; }
+      return { parte:qq.parte, id:qq.id, textoA:qq.a, textoB:qq.b, escolha };
+    });
+    const maioriaParte1 = p1a>=p1b ? "A" : "B";
+    const maioriaParte2 = p2a>=p2b ? "A" : "B";
+    const perfil = getTemperamentoProfile(maioriaParte1, maioriaParte2);
+    await DB.update("candidates", invite.id, { name:name.trim(), cpf:cleanCpf(cpf), email:email.trim(), status:"Respondido", answered_at:new Date().toISOString(), perfil_temperamento:perfil });
+    await DB.insert("temperamento_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), parte1_a:p1a, parte1_b:p1b, parte2_a:p2a, parte2_b:p2b, perfil, answers:answersDetail });
+    setResultProfile(perfil);
+    setSaving(false);
+    setStep("done");
+  };
+
+  if (step === "done") {
+    const prof = TEMPERAMENTO_PROFILES[resultProfile];
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:640,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:26,fontWeight:800,fontFamily:"'Playfair Display',serif",marginBottom:8 }}>Agradecemos a sua participação no nosso processo seletivo!</div>
+            <div style={{ color:"#6B6B6B",fontSize:15,lineHeight:1.6 }}>Nossa equipe de Recrutamento e Seleção vai analisar seu perfil e entrará em contato em breve.</div>
+          </div>
+          <div style={{ textAlign:"center",fontSize:13,fontWeight:600,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginTop:30,marginBottom:12 }}>Resultado do teste de perfil</div>
+          <div style={{ background:"#FFF",borderRadius:20,padding:40,textAlign:"center",boxShadow:"0 8px 40px rgba(0,0,0,.1)" }}>
+            <div style={{ fontSize:16,color:"#2C2C2C",marginBottom:20 }}>Seu perfil de temperamento é:</div>
+            <div style={{ width:90,height:90,borderRadius:24,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:36,fontWeight:800,color:"#FFF",fontFamily:"'Playfair Display',serif",marginBottom:16 }}>{prof.nome.charAt(0)}</div>
+            <div style={{ fontSize:28,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>{prof.nome}</div>
+            <div style={{ color:"#6B6B6B",marginTop:8,maxWidth:480,marginLeft:"auto",marginRight:"auto" }}>{prof.resumo}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "info") {
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:520,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:28,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Teste de Temperamento</div>
+            <div style={{ color:"#6B6B6B",marginTop:6 }}>Processo seletivo — Dux Logistics</div>
+          </div>
+          <div style={{ background:"#FFF",borderRadius:20,padding:"32px 28px",boxShadow:"0 2px 20px rgba(0,0,0,.06)" }}>
+            <div style={{ fontSize:15,color:"#6B6B6B",marginBottom:24 }}>Antes de começar, precisamos confirmar alguns dados. Leva menos de 1 minuto.</div>
+            {error && <div style={{ background:"#FADBD8",color:"#C0392B",padding:"12px 16px",borderRadius:10,fontSize:14,marginBottom:20,fontWeight:500 }}>{error}</div>}
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>Nome completo *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:18,boxSizing:"border-box" }} placeholder="Seu nome completo" value={name} onChange={e=>setName(e.target.value)}/>
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>CPF *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:18,boxSizing:"border-box" }} placeholder="000.000.000-00" value={cpf} onChange={e=>setCpf(formatCpf(e.target.value))} maxLength={14}/>
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>E-mail *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:24,boxSizing:"border-box" }} type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)}/>
+            <button onClick={handleStart} style={{ width:"100%",padding:"14px 24px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:15,cursor:"pointer" }}>Iniciar Teste →</button>
+            <div style={{ fontSize:12,color:"#9B9B9B",marginTop:16,textAlign:"center" }}>Seus dados serão usados exclusivamente para fins de recrutamento e seleção pela Dux Logistics.</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // step === "test"
+  const chosen = answers[key];
+  return (
+    <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+      <div style={{ maxWidth:700,margin:"0 auto" }}>
+        <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+          <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+          <div style={{ fontSize:32,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Teste de Temperamento</div>
+          <div style={{ color:"#6B6B6B",marginTop:4 }}>{name.trim().split(" ")[0]}, responda com sinceridade</div>
+        </div>
+
+        <div style={{ background:"#FFF",borderRadius:16,padding:"24px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)",borderLeft:"4px solid #2980B9" }}>
+          <div style={{ fontSize:16,fontWeight:700,marginBottom:8 }}>Como responder</div>
+          <div style={{ color:"#6B6B6B",fontSize:14 }}>Cada pergunta tem duas alternativas. Escolha a que <strong style={{ color:"#2C2C2C" }}>melhor representa você</strong>.</div>
+        </div>
+
+        <div style={{ textAlign:"center",margin:"20px 0" }}>
+          <div style={{ fontSize:14,color:"#6B6B6B" }}><strong style={{ color:"#2C2C2C" }}>{answered}</strong> de <strong style={{ color:"#2C2C2C" }}>{totalQ}</strong> respondidas</div>
+          <div style={{ height:8,background:"#E8E4DF",borderRadius:8,margin:"10px 0",overflow:"hidden" }}>
+            <div style={{ height:"100%",width:`${(answered/totalQ)*100}%`,background:"linear-gradient(90deg,#F39C12,#C0392B,#2980B9,#8E44AD)",borderRadius:8,transition:"width .5s ease" }}/>
+          </div>
+        </div>
+
+        <div style={{ background:"#FFF",borderRadius:20,padding:"32px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)" }}>
+          <div style={{ fontSize:12,fontWeight:600,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6 }}>Parte {q.parte} — Pergunta {q.id}</div>
+          <div style={{ fontSize:11,color:"#9B9B9B",marginBottom:20 }}>{currentQ+1} de {totalQ} no total</div>
+
+          <button onClick={()=>selectOption("A")} style={{ display:"block",width:"100%",textAlign:"left",border:`2px solid ${chosen==="A"?"#2C2C2C":"#E8E4DF"}`,background:chosen==="A"?"#F1EEE9":"#FFF",borderRadius:12,padding:"16px 18px",marginBottom:12,cursor:"pointer",fontFamily:T.font,fontSize:15,fontWeight:chosen==="A"?600:500,color:"#2C2C2C" }}>
+            {q.a}
+          </button>
+          <button onClick={()=>selectOption("B")} style={{ display:"block",width:"100%",textAlign:"left",border:`2px solid ${chosen==="B"?"#2C2C2C":"#E8E4DF"}`,background:chosen==="B"?"#F1EEE9":"#FFF",borderRadius:12,padding:"16px 18px",cursor:"pointer",fontFamily:T.font,fontSize:15,fontWeight:chosen==="B"?600:500,color:"#2C2C2C" }}>
+            {q.b}
+          </button>
+        </div>
+
+        <div style={{ display:"flex",justifyContent:"space-between",margin:"24px 0",gap:12 }}>
+          {currentQ>0?<button onClick={()=>{setCurrentQ(currentQ-1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:`2px solid #E8E4DF`,background:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer" }}>← Anterior</button>:<div/>}
+          {currentQ<totalQ-1?
+            <button disabled={!chosen} onClick={()=>{setCurrentQ(currentQ+1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",opacity:chosen?1:.3,marginLeft:"auto" }}>Próxima →</button>
+            : answered===totalQ?
+              <button onClick={handleFinish} disabled={saving} style={{ padding:"14px 36px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#F39C12,#8E44AD)",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",marginLeft:"auto" }}>{saving?"Enviando...":"Finalizar Teste ✦"}</button>
+              : <button disabled style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,opacity:.3,marginLeft:"auto" }}>Responda todas</button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// PUBLIC CANDIDATE TEST FLOW — AMBOS (DISC + Temperamento em sequência)
+// ============================================================
+const CombinedTestPublic = ({ invite }) => {
+  const [step, setStep] = useState("info"); // info | disc | temperamento | done
+  const [name, setName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // DISC state
+  const [discQ, setDiscQ] = useState(0);
+  const [discAnswers, setDiscAnswers] = useState({});
+  const [discResultData, setDiscResultData] = useState(null);
+  const [discResultView, setDiscResultView] = useState("mais");
+
+  // Temperamento state
+  const [tempQ, setTempQ] = useState(0);
+  const [tempAnswers, setTempAnswers] = useState({});
+  const [tempResultProfile, setTempResultProfile] = useState(null);
+
+  const discQuestions = useMemo(() => DISC_QUESTIONS.map(q => ({...q, options:[...q.options].sort(()=>Math.random()-.5)})),[]);
+  const tempQuestions = useMemo(() => [
+    ...TEMPERAMENTO_PARTE1.map(q => ({ ...q, parte:1 })),
+    ...TEMPERAMENTO_PARTE2.map(q => ({ ...q, parte:2 })),
+  ], []);
+
+  const handleStart = () => {
+    if (!name.trim()) { setError("Informe seu nome completo"); return; }
+    if (!isValidCpf(cpf)) { setError("CPF inválido. Confira os números digitados."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Informe um e-mail válido"); return; }
+    setError("");
+    setStep("disc");
+  };
+
+  // ---- DISC logic ----
+  const dq = discQuestions[discQ];
+  const dAns = discAnswers[dq.id] || {mais:null,menos:null};
+  const discAnswered = Object.values(discAnswers).filter(a=>a.mais!==null&&a.menos!==null).length;
+
+  const selectMais = (idx) => {
+    const cur = discAnswers[dq.id] || {mais:null,menos:null};
+    const newMais = cur.mais===idx?null:idx;
+    setDiscAnswers({...discAnswers,[dq.id]:{...cur,mais:newMais,menos:newMais===cur.menos?null:cur.menos}});
+  };
+  const selectMenos = (idx) => {
+    const cur = discAnswers[dq.id] || {mais:null,menos:null};
+    const newMenos = cur.menos===idx?null:idx;
+    setDiscAnswers({...discAnswers,[dq.id]:{...cur,menos:newMenos,mais:newMenos===cur.mais?null:cur.mais}});
+  };
+
+  const calcDiscScores = (type) => {
+    const scores = {D:0,I:0,S:0,C:0};
+    discQuestions.forEach(qq => {
+      const a = discAnswers[qq.id];
+      if (!a) return;
+      const idx = type==="mais"?a.mais:a.menos;
+      if (idx!==null&&idx!==undefined) scores[qq.options[idx].type]++;
+    });
+    return scores;
+  };
+  const getDiscWinner = (scores) => {
+    let max=-1,w="D";
+    for (const k of ["D","I","S","C"]) if(scores[k]>max){max=scores[k];w=k;}
+    return w;
+  };
+
+  const finishDiscPart = async () => {
+    setSaving(true);
+    const scoresMais = calcDiscScores("mais");
+    const scoresMenos = calcDiscScores("menos");
+    const perfilMais = getDiscWinner(scoresMais);
+    const perfilMenos = getDiscWinner(scoresMenos);
+    const answersDetail = discQuestions.map(qq => {
+      const a = discAnswers[qq.id] || {mais:null,menos:null};
+      return {
+        id: qq.id,
+        opcoes: qq.options.map(o=>({ palavra:o.word, tipo:o.type })),
+        mais: a.mais!==null&&a.mais!==undefined ? { palavra:qq.options[a.mais].word, tipo:qq.options[a.mais].type } : null,
+        menos: a.menos!==null&&a.menos!==undefined ? { palavra:qq.options[a.menos].word, tipo:qq.options[a.menos].type } : null,
+      };
+    });
+    await DB.update("candidates", invite.id, { name:name.trim(), cpf:cleanCpf(cpf), email:email.trim(), perfil:perfilMais });
+    await DB.insert("disc_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), scores_mais:scoresMais, scores_menos:scoresMenos, perfil_mais:perfilMais, perfil_menos:perfilMenos, answers:answersDetail });
+    setDiscResultData({ scoresMais, scoresMenos, perfilMais, perfilMenos });
+    setSaving(false);
+    setStep("temperamento");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+
+  // ---- Temperamento logic ----
+  const tq = tempQuestions[tempQ];
+  const tKey = `${tq.parte}-${tq.id}`;
+  const tempAnswered = Object.keys(tempAnswers).length;
+  const totalTempQ = tempQuestions.length;
+
+  const selectTempOption = (opt) => {
+    setTempAnswers({ ...tempAnswers, [tKey]: opt });
+  };
+
+  const finishTemperamentoPart = async () => {
+    setSaving(true);
+    let p1a=0,p1b=0,p2a=0,p2b=0;
+    const answersDetail = tempQuestions.map(qq => {
+      const k = `${qq.parte}-${qq.id}`;
+      const escolha = tempAnswers[k];
+      if (qq.parte===1) { if (escolha==="A") p1a++; else if (escolha==="B") p1b++; }
+      else { if (escolha==="A") p2a++; else if (escolha==="B") p2b++; }
+      return { parte:qq.parte, id:qq.id, textoA:qq.a, textoB:qq.b, escolha };
+    });
+    const maioriaParte1 = p1a>=p1b ? "A" : "B";
+    const maioriaParte2 = p2a>=p2b ? "A" : "B";
+    const perfil = getTemperamentoProfile(maioriaParte1, maioriaParte2);
+    await DB.update("candidates", invite.id, { status:"Respondido", answered_at:new Date().toISOString(), perfil_temperamento:perfil });
+    await DB.insert("temperamento_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), parte1_a:p1a, parte1_b:p1b, parte2_a:p2a, parte2_b:p2b, perfil, answers:answersDetail });
+    setTempResultProfile(perfil);
+    setSaving(false);
+    setStep("done");
+  };
+
+  const discColors = {D:"#C0392B",I:"#F39C12",S:"#27AE60",C:"#2980B9"};
+  const labels = ["I","II","III","IV"];
+
+  // ---- SCREENS ----
+  if (step === "done") {
+    const scores = discResultView==="mais" ? discResultData.scoresMais : discResultData.scoresMenos;
+    const winner = discResultView==="mais" ? discResultData.perfilMais : discResultData.perfilMenos;
+    const discProf = DISC_PROFILES[winner];
+    const tempProf = TEMPERAMENTO_PROFILES[tempResultProfile];
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:640,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:26,fontWeight:800,fontFamily:"'Playfair Display',serif",marginBottom:8 }}>Agradecemos a sua participação no nosso processo seletivo!</div>
+            <div style={{ color:"#6B6B6B",fontSize:15,lineHeight:1.6 }}>Nossa equipe de Recrutamento e Seleção vai analisar seu perfil e entrará em contato em breve.</div>
+          </div>
+
+          <div style={{ textAlign:"center",fontSize:13,fontWeight:600,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginTop:30,marginBottom:12 }}>Resultado do teste DISC</div>
+          <div style={{ display:"flex",justifyContent:"center",gap:8,marginBottom:12 }}>
+            {["mais","menos"].map(v => (
+              <button key={v} onClick={()=>setDiscResultView(v)} style={{ padding:"10px 24px",borderRadius:10,border:`2px solid ${discResultView===v?"#2C2C2C":"#E8E4DF"}`,background:discResultView===v?"#2C2C2C":"#FFF",color:discResultView===v?"#FFF":"#6B6B6B",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer" }}>
+                {v==="mais"?"O que mais te descreve":"O que menos te descreve"}
+              </button>
+            ))}
+          </div>
+          <div style={{ background:"#FFF",borderRadius:20,padding:32,textAlign:"center",boxShadow:"0 8px 40px rgba(0,0,0,.1)",marginBottom:30 }}>
+            <div style={{ width:70,height:70,borderRadius:18,background:discProf.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:30,fontWeight:800,color:"#FFF",fontFamily:"'Playfair Display',serif",marginBottom:12 }}>{winner}</div>
+            <div style={{ fontSize:22,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>{discProf.name}</div>
+            <div style={{ color:"#6B6B6B",marginTop:4,marginBottom:20 }}>{discProf.sub}</div>
+            <div style={{ display:"flex",justifyContent:"center",gap:16 }}>
+              {["D","I","S","C"].map(k => (
+                <div key={k} style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:6 }}>
+                  <div style={{ width:36,height:90,background:"#F7F5F2",borderRadius:10,position:"relative",overflow:"hidden" }}>
+                    <div style={{ position:"absolute",bottom:0,left:0,right:0,height:`${(scores[k]/25)*100}%`,background:discColors[k],borderRadius:10 }}/>
+                  </div>
+                  <div style={{ fontWeight:700,fontSize:14,color:discColors[k] }}>{k}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ textAlign:"center",fontSize:13,fontWeight:600,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:12 }}>Resultado do teste de Temperamento</div>
+          <div style={{ background:"#FFF",borderRadius:20,padding:32,textAlign:"center",boxShadow:"0 8px 40px rgba(0,0,0,.1)",marginBottom:20 }}>
+            <div style={{ width:70,height:70,borderRadius:18,background:tempProf.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:30,fontWeight:800,color:"#FFF",fontFamily:"'Playfair Display',serif",marginBottom:12 }}>{tempProf.nome.charAt(0)}</div>
+            <div style={{ fontSize:22,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>{tempProf.nome}</div>
+            <div style={{ color:"#6B6B6B",marginTop:8,maxWidth:460,marginLeft:"auto",marginRight:"auto" }}>{tempProf.resumo}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "info") {
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:520,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:28,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Testes de Perfil</div>
+            <div style={{ color:"#6B6B6B",marginTop:6 }}>DISC + Temperamento — Processo seletivo Dux Logistics</div>
+          </div>
+          <div style={{ background:"#FFF",borderRadius:20,padding:"32px 28px",boxShadow:"0 2px 20px rgba(0,0,0,.06)" }}>
+            <div style={{ fontSize:15,color:"#6B6B6B",marginBottom:24 }}>Você vai responder <strong>dois testes em sequência</strong> (leva cerca de 20 minutos no total). Antes de começar, precisamos confirmar alguns dados.</div>
+            {error && <div style={{ background:"#FADBD8",color:"#C0392B",padding:"12px 16px",borderRadius:10,fontSize:14,marginBottom:20,fontWeight:500 }}>{error}</div>}
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>Nome completo *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:18,boxSizing:"border-box" }} placeholder="Seu nome completo" value={name} onChange={e=>setName(e.target.value)}/>
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>CPF *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:18,boxSizing:"border-box" }} placeholder="000.000.000-00" value={cpf} onChange={e=>setCpf(formatCpf(e.target.value))} maxLength={14}/>
+            <label style={{ display:"block",fontSize:13,fontWeight:600,color:"#6B6B6B",marginBottom:6,textTransform:"uppercase",letterSpacing:".3px" }}>E-mail *</label>
+            <input style={{ width:"100%",padding:"12px 16px",border:"1.5px solid #E8E4DF",borderRadius:10,fontSize:15,fontFamily:T.font,marginBottom:24,boxSizing:"border-box" }} type="email" placeholder="seu@email.com" value={email} onChange={e=>setEmail(e.target.value)}/>
+            <button onClick={handleStart} style={{ width:"100%",padding:"14px 24px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:15,cursor:"pointer" }}>Iniciar Testes →</button>
+            <div style={{ fontSize:12,color:"#9B9B9B",marginTop:16,textAlign:"center" }}>Seus dados serão usados exclusivamente para fins de recrutamento e seleção pela Dux Logistics.</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "disc") {
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:700,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:14,fontWeight:700,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6 }}>Parte 1 de 2</div>
+            <div style={{ fontSize:32,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Teste DISC</div>
+            <div style={{ color:"#6B6B6B",marginTop:4 }}>{name.trim().split(" ")[0]}, responda com sinceridade</div>
+          </div>
+
+          <div style={{ background:"#FFF",borderRadius:16,padding:"24px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)",borderLeft:"4px solid #2980B9" }}>
+            <div style={{ fontSize:16,fontWeight:700,marginBottom:8 }}>Como responder</div>
+            <div style={{ color:"#6B6B6B",fontSize:14 }}>Em cada pergunta, escolha primeiro a que <strong style={{ color:"#2C2C2C" }}>mais te descreve</strong>, depois a que <strong style={{ color:"#2C2C2C" }}>menos te descreve</strong>.</div>
+          </div>
+
+          <div style={{ textAlign:"center",margin:"20px 0" }}>
+            <div style={{ fontSize:14,color:"#6B6B6B" }}><strong style={{ color:"#2C2C2C" }}>{discAnswered}</strong> de <strong style={{ color:"#2C2C2C" }}>25</strong> respondidas</div>
+            <div style={{ height:8,background:"#E8E4DF",borderRadius:8,margin:"10px 0",overflow:"hidden" }}>
+              <div style={{ height:"100%",width:`${(discAnswered/25)*100}%`,background:"linear-gradient(90deg,#C0392B,#F39C12,#27AE60,#2980B9)",borderRadius:8,transition:"width .5s ease" }}/>
+            </div>
+          </div>
+
+          <div style={{ background:"#FFF",borderRadius:20,padding:"32px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)" }}>
+            <div style={{ fontSize:12,fontWeight:600,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:20 }}>Pergunta {dq.id} de 25</div>
+
+            <div style={{ fontSize:16,fontWeight:700,marginBottom:14 }}>Qual mais te descreve? <span style={{ fontSize:11,padding:"4px 12px",borderRadius:20,background:"#D6EAF8",color:"#2471A3",fontWeight:600,textTransform:"uppercase",marginLeft:8 }}>MAIS</span></div>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:6 }}>
+              {dq.options.map((opt,idx) => {
+                const isMais = dAns.mais===idx;
+                const isMenos = dAns.menos===idx;
+                return <button key={idx} disabled={isMenos} onClick={()=>selectMais(idx)} style={{ border:`2px solid ${isMais?"#2471A3":"#E8E4DF"}`,background:isMais?"#D6EAF8":"#FFF",borderRadius:12,padding:"14px 16px",cursor:isMenos?"not-allowed":"pointer",opacity:isMenos?.4:1,display:"flex",alignItems:"center",gap:10,fontFamily:T.font,fontSize:14,fontWeight:isMais?600:500,color:isMais?"#1A5276":"#2C2C2C",textAlign:"left" }}>
+                  <span style={{ width:30,height:30,borderRadius:8,background:isMais?"#2471A3":"#F7F5F2",color:isMais?"#FFF":"#6B6B6B",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,flexShrink:0 }}>{labels[idx]}</span>
+                  {opt.word}
+                </button>;
+              })}
+            </div>
+
+            <div style={{ height:1,background:"#E8E4DF",margin:"20px 0" }}/>
+
+            <div style={{ fontSize:16,fontWeight:700,marginBottom:14 }}>Qual menos te descreve? <span style={{ fontSize:11,padding:"4px 12px",borderRadius:20,background:"#FADBD8",color:"#C0392B",fontWeight:600,textTransform:"uppercase",marginLeft:8 }}>MENOS</span></div>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10 }}>
+              {dq.options.map((opt,idx) => {
+                const isMenos = dAns.menos===idx;
+                const isMais = dAns.mais===idx;
+                return <button key={idx} disabled={isMais} onClick={()=>selectMenos(idx)} style={{ border:`2px solid ${isMenos?"#C0392B":"#E8E4DF"}`,background:isMenos?"#FADBD8":"#FFF",borderRadius:12,padding:"14px 16px",cursor:isMais?"not-allowed":"pointer",opacity:isMais?.4:1,display:"flex",alignItems:"center",gap:10,fontFamily:T.font,fontSize:14,fontWeight:isMenos?600:500,color:isMenos?"#922B21":"#2C2C2C",textAlign:"left" }}>
+                  <span style={{ width:30,height:30,borderRadius:8,background:isMenos?"#C0392B":"#F7F5F2",color:isMenos?"#FFF":"#6B6B6B",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,flexShrink:0 }}>{labels[idx]}</span>
+                  {opt.word}
+                </button>;
+              })}
+            </div>
+          </div>
+
+          <div style={{ display:"flex",justifyContent:"space-between",margin:"24px 0",gap:12 }}>
+            {discQ>0?<button onClick={()=>{setDiscQ(discQ-1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:`2px solid #E8E4DF`,background:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer" }}>← Anterior</button>:<div/>}
+            {discQ<24?
+              <button disabled={!(dAns.mais!==null&&dAns.menos!==null)} onClick={()=>{setDiscQ(discQ+1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",opacity:dAns.mais!==null&&dAns.menos!==null?1:.3,marginLeft:"auto" }}>Próxima →</button>
+              : discAnswered===25?
+                <button onClick={finishDiscPart} disabled={saving} style={{ padding:"14px 36px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#C0392B,#F39C12)",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",marginLeft:"auto" }}>{saving?"Enviando...":"Ir para Parte 2 →"}</button>
+                : <button disabled style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,opacity:.3,marginLeft:"auto" }}>Responda todas</button>
+            }
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // step === "temperamento"
+  const tChosen = tempAnswers[tKey];
+  return (
+    <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+      <div style={{ maxWidth:700,margin:"0 auto" }}>
+        <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+          <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+          <div style={{ fontSize:14,fontWeight:700,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6 }}>Parte 2 de 2</div>
+          <div style={{ fontSize:32,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Teste de Temperamento</div>
+          <div style={{ color:"#6B6B6B",marginTop:4 }}>{name.trim().split(" ")[0]}, já estamos quase terminando</div>
+        </div>
+
+        <div style={{ background:"#FFF",borderRadius:16,padding:"24px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)",borderLeft:"4px solid #8E44AD" }}>
+          <div style={{ fontSize:16,fontWeight:700,marginBottom:8 }}>Como responder</div>
+          <div style={{ color:"#6B6B6B",fontSize:14 }}>Cada pergunta tem duas alternativas. Escolha a que <strong style={{ color:"#2C2C2C" }}>melhor representa você</strong>.</div>
+        </div>
+
+        <div style={{ textAlign:"center",margin:"20px 0" }}>
+          <div style={{ fontSize:14,color:"#6B6B6B" }}><strong style={{ color:"#2C2C2C" }}>{tempAnswered}</strong> de <strong style={{ color:"#2C2C2C" }}>{totalTempQ}</strong> respondidas</div>
+          <div style={{ height:8,background:"#E8E4DF",borderRadius:8,margin:"10px 0",overflow:"hidden" }}>
+            <div style={{ height:"100%",width:`${(tempAnswered/totalTempQ)*100}%`,background:"linear-gradient(90deg,#F39C12,#C0392B,#2980B9,#8E44AD)",borderRadius:8,transition:"width .5s ease" }}/>
+          </div>
+        </div>
+
+        <div style={{ background:"#FFF",borderRadius:20,padding:"32px 28px",margin:"20px 0",boxShadow:"0 2px 20px rgba(0,0,0,.06)" }}>
+          <div style={{ fontSize:12,fontWeight:600,color:"#6B6B6B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6 }}>Parte {tq.parte} — Pergunta {tq.id}</div>
+          <div style={{ fontSize:11,color:"#9B9B9B",marginBottom:20 }}>{tempQ+1} de {totalTempQ} no total</div>
+
+          <button onClick={()=>selectTempOption("A")} style={{ display:"block",width:"100%",textAlign:"left",border:`2px solid ${tChosen==="A"?"#2C2C2C":"#E8E4DF"}`,background:tChosen==="A"?"#F1EEE9":"#FFF",borderRadius:12,padding:"16px 18px",marginBottom:12,cursor:"pointer",fontFamily:T.font,fontSize:15,fontWeight:tChosen==="A"?600:500,color:"#2C2C2C" }}>
+            {tq.a}
+          </button>
+          <button onClick={()=>selectTempOption("B")} style={{ display:"block",width:"100%",textAlign:"left",border:`2px solid ${tChosen==="B"?"#2C2C2C":"#E8E4DF"}`,background:tChosen==="B"?"#F1EEE9":"#FFF",borderRadius:12,padding:"16px 18px",cursor:"pointer",fontFamily:T.font,fontSize:15,fontWeight:tChosen==="B"?600:500,color:"#2C2C2C" }}>
+            {tq.b}
+          </button>
+        </div>
+
+        <div style={{ display:"flex",justifyContent:"space-between",margin:"24px 0",gap:12 }}>
+          {tempQ>0?<button onClick={()=>{setTempQ(tempQ-1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:`2px solid #E8E4DF`,background:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer" }}>← Anterior</button>:<div/>}
+          {tempQ<totalTempQ-1?
+            <button disabled={!tChosen} onClick={()=>{setTempQ(tempQ+1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",opacity:tChosen?1:.3,marginLeft:"auto" }}>Próxima →</button>
+            : tempAnswered===totalTempQ?
+              <button onClick={finishTemperamentoPart} disabled={saving} style={{ padding:"14px 36px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#F39C12,#8E44AD)",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",marginLeft:"auto" }}>{saving?"Enviando...":"Finalizar Testes ✦"}</button>
+              : <button disabled style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,opacity:.3,marginLeft:"auto" }}>Responda todas</button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
 // LINK/INVALID LINK SCREEN
 // ============================================================
 const InvalidLinkScreen = ({ reason }) => (
@@ -638,6 +1192,7 @@ const UserModal = ({ onClose, onSave, editUser }) => {
 const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) => {
   const [vaga, setVaga] = useState("");
   const [empresa, setEmpresa] = useState("");
+  const [tipoTeste, setTipoTeste] = useState("disc");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [created, setCreated] = useState(null);
@@ -648,7 +1203,7 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
     setError("");
     setSaving(true);
     const id = genId();
-    await DB.insert("candidates", { id, vaga:vaga.trim(), empresa, status:"Pendente", created_by:currentUser.id });
+    await DB.insert("candidates", { id, vaga:vaga.trim(), empresa, tipo_teste:tipoTeste, status:"Pendente", created_by:currentUser.id });
     setSaving(false);
     setCreated(id);
   };
@@ -662,8 +1217,9 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
   const handleEmail = () => {
     const to = prompt("E-mail do candidato:");
     if (!to) return;
-    const subject = "Teste de Perfil Comportamental — Dux Logistics";
-    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste de perfil comportamental (leva cerca de 10 minutos):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
+    const subject = tipoTeste==="temperamento" ? "Teste de Temperamento — Dux Logistics" : tipoTeste==="ambos" ? "Testes de Perfil (DISC + Temperamento) — Dux Logistics" : "Teste de Perfil Comportamental — Dux Logistics";
+    const tempoEstimado = tipoTeste==="ambos" ? "cerca de 20 minutos" : "cerca de 10 minutos";
+    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste (leva ${tempoEstimado}):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -674,6 +1230,15 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Gerar Link para Candidato</div>
           <div style={{ fontSize:13,color:T.textSec,marginBottom:28 }}>O candidato vai informar nome, CPF e e-mail ao abrir o link</div>
           {error && <div style={errBox}>{error}</div>}
+          <label style={labelS}>Qual teste enviar? *</label>
+          <div style={{ display:"flex",gap:10,marginBottom:20 }}>
+            {[{id:"disc",label:"Teste DISC"},{id:"temperamento",label:"Temperamento"},{id:"ambos",label:"Ambos os testes"}].map(t => (
+              <button key={t.id} type="button" onClick={()=>setTipoTeste(t.id)}
+                style={{ flex:1,padding:"12px 10px",borderRadius:10,border:`2px solid ${tipoTeste===t.id?T.primary:T.border}`,background:tipoTeste===t.id?T.primaryLight:"#FFF",color:tipoTeste===t.id?T.primary:T.textSec,fontFamily:T.font,fontWeight:600,fontSize:12,cursor:"pointer" }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
           <label style={labelS}>Empresa do grupo *</label>
           <select style={select} value={empresa} onChange={e=>setEmpresa(e.target.value)}>
             <option value="">Selecione a empresa</option>
@@ -692,7 +1257,7 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
       ) : (
         <>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Link gerado! ✅</div>
-          <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>Copie o link ou envie direto por e-mail para o candidato</div>
+          <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>{tipoTeste==="temperamento"?"Teste de Temperamento":tipoTeste==="ambos"?"DISC + Temperamento":"Teste DISC"} — copie o link ou envie direto por e-mail para o candidato</div>
           <div style={{ background:T.bg,border:`1px solid ${T.border}`,borderRadius:T.radSm,padding:"12px 14px",marginBottom:20,fontSize:13,wordBreak:"break-all",color:T.textSec }}>{link}</div>
           <div style={{ display:"flex",gap:12,marginBottom:12 }}>
             <button style={{ ...btnO,flex:1 }} onClick={handleCopy}>{copied?"Copiado!":"Copiar Link"}</button>
@@ -890,6 +1455,400 @@ const ResultModal = ({ candidate, onClose }) => {
 };
 
 // ============================================================
+// HELPER: DOWNLOAD TEMPERAMENTO RESULT AS DOCUMENT (via print)
+// ============================================================
+const downloadTemperamentoDocument = (candidate, result) => {
+  const w = window.open("", "_blank");
+  if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
+  const prof = TEMPERAMENTO_PROFILES[result.perfil];
+  w.document.write(`
+    <html><head><title>Resultado — ${candidate.name}</title>
+    <meta charset="utf-8"/>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
+      *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
+      h1{font-size:22px;margin-bottom:4px;}
+      .sub{color:#6B6B6B;font-size:13px;margin-bottom:24px;}
+      .info{background:#F7F5F2;border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.8;}
+      .info b{display:inline-block;width:110px;color:#6B6B6B;}
+      .profile{border:1px solid #E5E0D8;border-radius:14px;padding:28px;text-align:center;}
+      .circle{width:64px;height:64px;border-radius:18px;background:${prof.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin-bottom:12px;}
+      .section{text-align:left;margin-top:20px;font-size:13px;line-height:1.6;}
+      .section b{color:${prof.color};}
+      @media print { body{padding:20px;} }
+    </style>
+    </head><body>
+      <h1>Resultado — Teste de Temperamento</h1>
+      <div class="sub">Dux Logistics — Processo Seletivo</div>
+      <div class="info">
+        <div><b>Nome:</b> ${candidate.name}</div>
+        <div><b>CPF:</b> ${formatCpf(candidate.cpf)}</div>
+        <div><b>E-mail:</b> ${candidate.email}</div>
+        ${candidate.empresa?`<div><b>Empresa:</b> ${candidate.empresa}</div>`:""}
+        ${candidate.vaga?`<div><b>Vaga:</b> ${candidate.vaga}</div>`:""}
+        <div><b>Respondido em:</b> ${fmtDateTime(candidate.answered_at)}</div>
+      </div>
+      <div class="profile">
+        <div class="circle">${prof.nome.charAt(0)}</div>
+        <div style="font-size:20px;font-weight:700;">${prof.nome}</div>
+        <div style="color:#6B6B6B;font-size:13px;margin-top:6px;">${prof.resumo}</div>
+        <div class="section"><b>Pontos fortes:</b> ${prof.fortes}</div>
+        <div class="section"><b>Pontos de atenção:</b> ${prof.fracos}</div>
+        <div class="section"><b>Necessidades emocionais:</b> ${prof.necessidades}</div>
+      </div>
+    </body></html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 400);
+};
+
+// ============================================================
+// MODAL: VIEW TEMPERAMENTO ANSWERS (32 questions detail)
+// ============================================================
+const TemperamentoAnswersModal = ({ candidate, onClose }) => {
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const r = await DB.getByField("temperamento_results", "candidate_id", candidate.id);
+      setResult(r);
+      setLoading(false);
+    })();
+  }, [candidate.id]);
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Respostas de {candidate.name}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>As 32 respostas do teste de temperamento</div>
+      {loading ? (
+        <div style={{ color:T.textMut,fontSize:14 }}>Carregando...</div>
+      ) : !result || !result.answers ? (
+        <div style={errBox}>Detalhamento de respostas não disponível para este candidato.</div>
+      ) : (
+        <div style={{ maxHeight:440,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
+          {result.answers.map((a,i) => (
+            <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
+              <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PARTE {a.parte} — PERGUNTA {a.id}</div>
+              <div style={{ display:"flex",flexDirection:"column",gap:6 }}>
+                <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
+                  background:a.escolha==="A"?T.successLight:T.bg, color:a.escolha==="A"?T.success:T.textSec,
+                  border:`1px solid ${a.escolha==="A"?T.success:T.border}` }}>
+                  {a.textoA}{a.escolha==="A"?" ✓":""}
+                </div>
+                <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
+                  background:a.escolha==="B"?T.successLight:T.bg, color:a.escolha==="B"?T.success:T.textSec,
+                  border:`1px solid ${a.escolha==="B"?T.success:T.border}` }}>
+                  {a.textoB}{a.escolha==="B"?" ✓":""}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{ marginTop:20,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
+    </Modal>
+  );
+};
+
+// ============================================================
+// MODAL: VIEW TEMPERAMENTO RESULT
+// ============================================================
+const TemperamentoResultModal = ({ candidate, onClose }) => {
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const r = await DB.getByField("temperamento_results", "candidate_id", candidate.id);
+      setResult(r);
+      setLoading(false);
+    })();
+  }, [candidate.id]);
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>{candidate.name}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>
+        CPF: {formatCpf(candidate.cpf)} • {candidate.email}{candidate.empresa?` • ${candidate.empresa}`:""}{candidate.vaga?` • Vaga: ${candidate.vaga}`:""}
+      </div>
+      {loading ? (
+        <div style={{ color:T.textMut,fontSize:14 }}>Carregando resultado...</div>
+      ) : !result ? (
+        <div style={errBox}>Resultado não encontrado.</div>
+      ) : (() => {
+        const prof = TEMPERAMENTO_PROFILES[result.perfil];
+        return (
+          <>
+            <div style={{ background:T.bg,borderRadius:16,padding:28,textAlign:"center" }}>
+              <div style={{ width:72,height:72,borderRadius:20,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:800,color:"#fff",marginBottom:12 }}>{prof.nome.charAt(0)}</div>
+              <div style={{ fontSize:22,fontWeight:700 }}>{prof.nome}</div>
+              <div style={{ color:T.textSec,fontSize:13,marginBottom:16 }}>{prof.resumo}</div>
+              <div style={{ textAlign:"left",fontSize:13,lineHeight:1.6,marginTop:16 }}>
+                <div style={{ marginBottom:8 }}><strong style={{ color:prof.color }}>Pontos fortes:</strong> {prof.fortes}</div>
+                <div style={{ marginBottom:8 }}><strong style={{ color:prof.color }}>Pontos de atenção:</strong> {prof.fracos}</div>
+                <div><strong style={{ color:prof.color }}>Necessidades emocionais:</strong> {prof.necessidades}</div>
+              </div>
+            </div>
+            <div style={{ fontSize:12,color:T.textMut,marginTop:16 }}>Teste respondido em {fmtDateTime(candidate.answered_at)}</div>
+          </>
+        );
+      })()}
+      <div style={{ marginTop:24,display:"flex",justifyContent:"flex-end",gap:12 }}>
+        {result && <button style={btnP} onClick={()=>downloadTemperamentoDocument(candidate,result)}>Baixar Resultado</button>}
+        <button style={btnO} onClick={onClose}>Fechar</button>
+      </div>
+    </Modal>
+  );
+};
+
+// ============================================================
+// HELPER: DOWNLOAD COMBINED RESULT (DISC + Temperamento) AS DOCUMENT
+// ============================================================
+const downloadCombinedDocument = (candidate, discResult, tempResult) => {
+  const w = window.open("", "_blank");
+  if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
+  const tprof = TEMPERAMENTO_PROFILES[tempResult.perfil];
+  const buildDiscBlock = (view) => {
+    const scores = view==="mais" ? discResult.scores_mais : discResult.scores_menos;
+    const winner = view==="mais" ? discResult.perfil_mais : discResult.perfil_menos;
+    const prof = DISC_PROFILES[winner];
+    const bars = ["D","I","S","C"].map(k => `
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:0 14px;">
+        <div style="width:30px;height:64px;background:#F1EEE9;border-radius:8px;position:relative;overflow:hidden;border:1px solid #E5E0D8;">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:${(scores[k]/25)*100}%;background:${discColorsMap[k]};"></div>
+        </div>
+        <div style="font-weight:700;font-size:12px;color:${discColorsMap[k]};">${k}</div>
+        <div style="font-weight:600;font-size:10px;color:#6B6B6B;">${scores[k]}</div>
+      </div>`).join("");
+    return `
+      <div style="border:1px solid #E5E0D8;border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;">${view==="mais"?"O que mais o descreve":"O que menos o descreve"}</div>
+        <div style="width:48px;height:48px;border-radius:12px;background:${prof.color};display:inline-flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">${winner}</div>
+        <div style="font-size:16px;font-weight:700;">${prof.name}</div>
+        <div style="color:#6B6B6B;font-size:11px;margin-bottom:12px;">${prof.sub}</div>
+        <div>${bars}</div>
+      </div>`;
+  };
+  w.document.write(`
+    <html><head><title>Resultado — ${candidate.name}</title>
+    <meta charset="utf-8"/>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
+      *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
+      h1{font-size:22px;margin-bottom:4px;}
+      h2{font-size:16px;margin:28px 0 12px;border-top:1px solid #E5E0D8;padding-top:20px;}
+      .sub{color:#6B6B6B;font-size:13px;margin-bottom:24px;}
+      .info{background:#F7F5F2;border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.8;}
+      .info b{display:inline-block;width:110px;color:#6B6B6B;}
+      .profile{border:1px solid #E5E0D8;border-radius:14px;padding:24px;text-align:center;}
+      .circle{width:56px;height:56px;border-radius:16px;background:${tprof.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin-bottom:10px;}
+      .section{text-align:left;margin-top:16px;font-size:12px;line-height:1.6;}
+      .section b{color:${tprof.color};}
+      @media print { body{padding:20px;} }
+    </style>
+    </head><body>
+      <h1>Resultado — Testes de Perfil (DISC + Temperamento)</h1>
+      <div class="sub">Dux Logistics — Processo Seletivo</div>
+      <div class="info">
+        <div><b>Nome:</b> ${candidate.name}</div>
+        <div><b>CPF:</b> ${formatCpf(candidate.cpf)}</div>
+        <div><b>E-mail:</b> ${candidate.email}</div>
+        ${candidate.empresa?`<div><b>Empresa:</b> ${candidate.empresa}</div>`:""}
+        ${candidate.vaga?`<div><b>Vaga:</b> ${candidate.vaga}</div>`:""}
+        <div><b>Respondido em:</b> ${fmtDateTime(candidate.answered_at)}</div>
+      </div>
+      <h2>Teste DISC</h2>
+      ${buildDiscBlock("mais")}
+      ${buildDiscBlock("menos")}
+      <h2>Teste de Temperamento</h2>
+      <div class="profile">
+        <div class="circle">${tprof.nome.charAt(0)}</div>
+        <div style="font-size:18px;font-weight:700;">${tprof.nome}</div>
+        <div style="color:#6B6B6B;font-size:12px;margin-top:6px;">${tprof.resumo}</div>
+        <div class="section"><b>Pontos fortes:</b> ${tprof.fortes}</div>
+        <div class="section"><b>Pontos de atenção:</b> ${tprof.fracos}</div>
+        <div class="section"><b>Necessidades emocionais:</b> ${tprof.necessidades}</div>
+      </div>
+    </body></html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 400);
+};
+
+// ============================================================
+// MODAL: VIEW COMBINED RESULT (DISC + Temperamento)
+// ============================================================
+const CombinedResultModal = ({ candidate, onClose }) => {
+  const [discResult, setDiscResult] = useState(null);
+  const [tempResult, setTempResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState("mais");
+
+  useEffect(() => {
+    (async () => {
+      const [dr, tr] = await Promise.all([
+        DB.getByField("disc_results", "candidate_id", candidate.id),
+        DB.getByField("temperamento_results", "candidate_id", candidate.id),
+      ]);
+      setDiscResult(dr);
+      setTempResult(tr);
+      setLoading(false);
+    })();
+  }, [candidate.id]);
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>{candidate.name}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>
+        CPF: {formatCpf(candidate.cpf)} • {candidate.email}{candidate.empresa?` • ${candidate.empresa}`:""}{candidate.vaga?` • Vaga: ${candidate.vaga}`:""}
+      </div>
+      {loading ? (
+        <div style={{ color:T.textMut,fontSize:14 }}>Carregando resultados...</div>
+      ) : (
+        <>
+          {discResult && (
+            <>
+              <div style={{ fontSize:14,fontWeight:700,marginBottom:10 }}>Teste DISC</div>
+              <div style={{ display:"flex",gap:8,marginBottom:16 }}>
+                {["mais","menos"].map(v => (
+                  <button key={v} onClick={()=>setView(v)} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${view===v?T.primary:T.border}`,background:view===v?T.primaryLight:"transparent",color:view===v?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>
+                    {v==="mais"?"Mais o descreve":"Menos o descreve"}
+                  </button>
+                ))}
+              </div>
+              {(() => {
+                const scores = view==="mais" ? discResult.scores_mais : discResult.scores_menos;
+                const winner = view==="mais" ? discResult.perfil_mais : discResult.perfil_menos;
+                const prof = DISC_PROFILES[winner];
+                return (
+                  <div style={{ background:T.bg,borderRadius:16,padding:24,textAlign:"center",marginBottom:24 }}>
+                    <div style={{ width:60,height:60,borderRadius:16,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:26,fontWeight:800,color:"#fff",marginBottom:10 }}>{winner}</div>
+                    <div style={{ fontSize:18,fontWeight:700 }}>{prof.name}</div>
+                    <div style={{ color:T.textSec,fontSize:12,marginBottom:16 }}>{prof.sub}</div>
+                    <div style={{ display:"flex",justifyContent:"center",gap:14 }}>
+                      {["D","I","S","C"].map(k => (
+                        <div key={k} style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:5 }}>
+                          <div style={{ width:28,height:70,background:"#FFF",borderRadius:6,position:"relative",overflow:"hidden",border:`1px solid ${T.border}` }}>
+                            <div style={{ position:"absolute",bottom:0,left:0,right:0,height:`${(scores[k]/25)*100}%`,background:discColorsMap[k],borderRadius:6 }}/>
+                          </div>
+                          <div style={{ fontWeight:700,fontSize:11,color:discColorsMap[k] }}>{k}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+            </>
+          )}
+          {tempResult && (() => {
+            const prof = TEMPERAMENTO_PROFILES[tempResult.perfil];
+            return (
+              <>
+                <div style={{ fontSize:14,fontWeight:700,marginBottom:10 }}>Teste de Temperamento</div>
+                <div style={{ background:T.bg,borderRadius:16,padding:24,textAlign:"center" }}>
+                  <div style={{ width:60,height:60,borderRadius:16,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:800,color:"#fff",marginBottom:10 }}>{prof.nome.charAt(0)}</div>
+                  <div style={{ fontSize:18,fontWeight:700 }}>{prof.nome}</div>
+                  <div style={{ color:T.textSec,fontSize:12 }}>{prof.resumo}</div>
+                </div>
+              </>
+            );
+          })()}
+          {!discResult && !tempResult && <div style={errBox}>Nenhum resultado encontrado.</div>}
+        </>
+      )}
+      <div style={{ marginTop:24,display:"flex",justifyContent:"flex-end",gap:12 }}>
+        {discResult && tempResult && <button style={btnP} onClick={()=>downloadCombinedDocument(candidate,discResult,tempResult)}>Baixar Resultado</button>}
+        <button style={btnO} onClick={onClose}>Fechar</button>
+      </div>
+    </Modal>
+  );
+};
+
+// ============================================================
+// MODAL: VIEW COMBINED ANSWERS (DISC + Temperamento)
+// ============================================================
+const CombinedAnswersModal = ({ candidate, onClose }) => {
+  const [tab, setTab] = useState("disc");
+  const [discResult, setDiscResult] = useState(null);
+  const [tempResult, setTempResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const [dr, tr] = await Promise.all([
+        DB.getByField("disc_results", "candidate_id", candidate.id),
+        DB.getByField("temperamento_results", "candidate_id", candidate.id),
+      ]);
+      setDiscResult(dr);
+      setTempResult(tr);
+      setLoading(false);
+    })();
+  }, [candidate.id]);
+
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Respostas de {candidate.name}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:16 }}>Todas as respostas dos dois testes</div>
+      <div style={{ display:"flex",gap:8,marginBottom:16 }}>
+        <button onClick={()=>setTab("disc")} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${tab==="disc"?T.primary:T.border}`,background:tab==="disc"?T.primaryLight:"transparent",color:tab==="disc"?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>Teste DISC</button>
+        <button onClick={()=>setTab("temperamento")} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${tab==="temperamento"?T.primary:T.border}`,background:tab==="temperamento"?T.primaryLight:"transparent",color:tab==="temperamento"?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>Teste de Temperamento</button>
+      </div>
+      {loading ? (
+        <div style={{ color:T.textMut,fontSize:14 }}>Carregando...</div>
+      ) : tab==="disc" ? (
+        !discResult || !discResult.answers ? <div style={errBox}>Respostas do DISC não disponíveis.</div> : (
+          <div style={{ maxHeight:400,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
+            {discResult.answers.map((a,i) => (
+              <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
+                <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PERGUNTA {a.id}</div>
+                <div style={{ display:"flex",flexWrap:"wrap",gap:8 }}>
+                  {a.opcoes.map((o,oi) => {
+                    const isMais = a.mais && a.mais.palavra===o.palavra;
+                    const isMenos = a.menos && a.menos.palavra===o.palavra;
+                    return (
+                      <span key={oi} style={{ padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600,
+                        background: isMais?T.successLight:isMenos?T.dangerLight:T.bg,
+                        color: isMais?T.success:isMenos?T.danger:T.textSec,
+                        border:`1px solid ${isMais?T.success:isMenos?T.danger:T.border}` }}>
+                        {o.palavra}{isMais?" ✓ mais":isMenos?" ✗ menos":""}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        !tempResult || !tempResult.answers ? <div style={errBox}>Respostas do Temperamento não disponíveis.</div> : (
+          <div style={{ maxHeight:400,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
+            {tempResult.answers.map((a,i) => (
+              <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
+                <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PARTE {a.parte} — PERGUNTA {a.id}</div>
+                <div style={{ display:"flex",flexDirection:"column",gap:6 }}>
+                  <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
+                    background:a.escolha==="A"?T.successLight:T.bg, color:a.escolha==="A"?T.success:T.textSec,
+                    border:`1px solid ${a.escolha==="A"?T.success:T.border}` }}>
+                    {a.textoA}{a.escolha==="A"?" ✓":""}
+                  </div>
+                  <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
+                    background:a.escolha==="B"?T.successLight:T.bg, color:a.escolha==="B"?T.success:T.textSec,
+                    border:`1px solid ${a.escolha==="B"?T.success:T.border}` }}>
+                    {a.textoB}{a.escolha==="B"?" ✓":""}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+      <div style={{ marginTop:20,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
+    </Modal>
+  );
+};
+
+// ============================================================
 // PAGE: DASHBOARD
 // ============================================================
 const DashboardPage = ({ candidates }) => {
@@ -935,6 +1894,8 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
   const [showNew, setShowNew] = useState(false);
   const [viewResult, setViewResult] = useState(null);
   const [viewAnswers, setViewAnswers] = useState(null);
+  const [viewResultTemp, setViewResultTemp] = useState(null);
+  const [viewAnswersTemp, setViewAnswersTemp] = useState(null);
   const [deleteC, setDeleteC] = useState(null);
   const [filterStatus, setFilterStatus] = useState("Todos");
   const [filterEmpresa, setFilterEmpresa] = useState("Todas");
@@ -953,12 +1914,30 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
     return true;
   });
 
+  // Quando "ambos" os testes já foram respondidos, exibe como duas linhas (uma por teste)
+  const displayRows = [];
+  filtered.forEach(c => {
+    if (c.tipo_teste === "ambos" && c.status === "Respondido") {
+      displayRows.push({ ...c, _rowKey:`${c.id}-disc`, _displayType:"disc" });
+      displayRows.push({ ...c, _rowKey:`${c.id}-temperamento`, _displayType:"temperamento" });
+    } else {
+      displayRows.push({ ...c, _rowKey:c.id, _displayType:c.tipo_teste });
+    }
+  });
+
   const handleDownload = async (c) => {
-    setDownloadingId(c.id);
-    const r = await DB.getByField("disc_results", "candidate_id", c.id);
-    setDownloadingId(null);
-    if (!r) { setMsg("Resultado não encontrado"); setTimeout(()=>setMsg(""),2000); return; }
-    downloadResultDocument(c, r);
+    setDownloadingId(c._rowKey);
+    if (c._displayType === "temperamento") {
+      const r = await DB.getByField("temperamento_results", "candidate_id", c.id);
+      setDownloadingId(null);
+      if (!r) { setMsg("Resultado não encontrado"); setTimeout(()=>setMsg(""),2000); return; }
+      downloadTemperamentoDocument(c, r);
+    } else {
+      const r = await DB.getByField("disc_results", "candidate_id", c.id);
+      setDownloadingId(null);
+      if (!r) { setMsg("Resultado não encontrado"); setTimeout(()=>setMsg(""),2000); return; }
+      downloadResultDocument(c, r);
+    }
   };
 
   const handleDelete = async (c) => {
@@ -978,8 +1957,8 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
     const to = prompt("E-mail do candidato:");
     if (!to) return;
     const link = `${window.location.origin}${window.location.pathname}?token=${c.id}`;
-    const subject = "Teste de Perfil Comportamental — Dux Logistics";
-    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste de perfil comportamental (leva cerca de 10 minutos):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
+    const subject = c.tipo_teste==="temperamento" ? "Teste de Temperamento — Dux Logistics" : c.tipo_teste==="ambos" ? "Testes de Perfil (DISC + Temperamento) — Dux Logistics" : "Teste de Perfil Comportamental — Dux Logistics";
+    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste (leva cerca de 10 minutos):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -1015,7 +1994,7 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
           {vagasList.map(v => <option key={v} value={v}>{v}</option>)}
         </select>
       </div>
-      {filtered.length === 0 ? (
+      {displayRows.length === 0 ? (
         <div style={{ ...card,textAlign:"center",padding:"60px 20px" }}>
           <div style={{ fontSize:18,fontWeight:600,marginBottom:8 }}>Nenhum candidato encontrado</div>
           <div style={{ color:T.textSec }}>Clique em "Gerar Link" para convidar o primeiro candidato.</div>
@@ -1023,25 +2002,41 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
       ) : (
         <div style={{ ...card,padding:0,overflow:"hidden" }}>
           <div style={{ overflowX:"auto" }}>
-          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0,minWidth:1180 }}>
+          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0,minWidth:1280 }}>
             <thead><tr>
-              <th style={thS}>Nome</th><th style={thS}>CPF</th><th style={thS}>E-mail</th><th style={thS}>Empresa</th><th style={thS}>Vaga</th><th style={thS}>Perfil</th><th style={thS}>Status</th><th style={thS}>Criado em</th><th style={thS}>Respondido em</th><th style={{ ...thS,textAlign:"right" }}>Ações</th>
+              <th style={thS}>Nome</th><th style={thS}>CPF</th><th style={thS}>E-mail</th><th style={thS}>Empresa</th><th style={thS}>Vaga</th><th style={thS}>Teste</th><th style={thS}>Perfil</th><th style={thS}>Status</th><th style={thS}>Criado em</th><th style={thS}>Respondido em</th><th style={{ ...thS,textAlign:"right" }}>Ações</th>
             </tr></thead>
             <tbody>
-              {filtered.map(c => (
-                <tr key={c.id} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceHover} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              {displayRows.map(c => (
+                <tr key={c._rowKey} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceHover} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                   <td style={{ ...tdS,fontWeight:500 }}>{c.name || <span style={{ color:T.textMut,fontStyle:"italic" }}>Aguardando resposta</span>}</td>
                   <td style={tdS}>{c.cpf?formatCpf(c.cpf):"-"}</td>
                   <td style={tdS}>{c.email||"-"}</td>
                   <td style={tdS}>{c.empresa ? <span style={badge(c.empresa)}>{c.empresa}</span> : "-"}</td>
                   <td style={tdS}>{c.vaga||"-"}</td>
                   <td style={tdS}>
-                    {c.perfil ? (
-                      <span style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"4px 10px 4px 4px",borderRadius:20,background:DISC_PROFILES[c.perfil]?.color+"22",fontWeight:600,fontSize:12,color:DISC_PROFILES[c.perfil]?.color }}>
-                        <span style={{ width:20,height:20,borderRadius:6,background:DISC_PROFILES[c.perfil]?.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800 }}>{c.perfil}</span>
-                        {DISC_PROFILES[c.perfil]?.name}
-                      </span>
-                    ) : "-"}
+                    <span style={{ display:"inline-block",padding:"4px 10px",borderRadius:20,fontSize:11,fontWeight:600,
+                      background:c._displayType==="ambos"?T.successLight:c._displayType==="temperamento"?"#8E44AD22":T.primaryLight,
+                      color:c._displayType==="ambos"?T.success:c._displayType==="temperamento"?"#8E44AD":T.primary }}>
+                      {c._displayType==="ambos"?"DISC + Temperamento":c._displayType==="temperamento"?"Temperamento":"DISC"}
+                    </span>
+                  </td>
+                  <td style={tdS}>
+                    <div style={{ display:"flex",flexDirection:"column",gap:4 }}>
+                      {c._displayType!=="temperamento" && c.perfil && DISC_PROFILES[c.perfil] && (
+                        <span style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"3px 10px 3px 3px",borderRadius:20,background:DISC_PROFILES[c.perfil].color+"22",fontWeight:600,fontSize:11,color:DISC_PROFILES[c.perfil].color,width:"fit-content" }}>
+                          <span style={{ width:17,height:17,borderRadius:5,background:DISC_PROFILES[c.perfil].color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800 }}>{c.perfil}</span>
+                          {DISC_PROFILES[c.perfil].name}
+                        </span>
+                      )}
+                      {c._displayType!=="disc" && c.perfil_temperamento && TEMPERAMENTO_PROFILES[c.perfil_temperamento] && (
+                        <span style={{ display:"inline-flex",alignItems:"center",gap:6,padding:"3px 10px 3px 3px",borderRadius:20,background:TEMPERAMENTO_PROFILES[c.perfil_temperamento].color+"22",fontWeight:600,fontSize:11,color:TEMPERAMENTO_PROFILES[c.perfil_temperamento].color,width:"fit-content" }}>
+                          <span style={{ width:17,height:17,borderRadius:5,background:TEMPERAMENTO_PROFILES[c.perfil_temperamento].color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800 }}>{TEMPERAMENTO_PROFILES[c.perfil_temperamento].nome.charAt(0)}</span>
+                          {TEMPERAMENTO_PROFILES[c.perfil_temperamento].nome}
+                        </span>
+                      )}
+                      {!(c._displayType!=="temperamento" && c.perfil) && !(c._displayType!=="disc" && c.perfil_temperamento) && "-"}
+                    </div>
                   </td>
                   <td style={tdS}><span style={badge(c.status==="Respondido"?"Positivo":"Para melhorar")}>{c.status}</span></td>
                   <td style={{ ...tdS,fontSize:13,color:T.textSec }}>{fmtDate(c.created_at)}</td>
@@ -1049,9 +2044,15 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
                   <td style={{ ...tdS,textAlign:"right",whiteSpace:"nowrap" }}>
                     {c.status==="Respondido" ? (
                       <>
-                        <button style={btnSm} onClick={()=>setViewResult(c)} title="Ver resultado"><Icon name="eye" size={14}/></button>
-                        <button style={{ ...btnSm,marginLeft:6 }} onClick={()=>setViewAnswers(c)} title="Ver respostas"><Icon name="feedback" size={14}/></button>
-                        <button style={{ ...btnSm,marginLeft:6,opacity:downloadingId===c.id?.5:1 }} onClick={()=>handleDownload(c)} disabled={downloadingId===c.id} title="Baixar resultado"><Icon name="download" size={14}/></button>
+                        <button style={btnSm} onClick={()=>{
+                          if (c._displayType==="temperamento") setViewResultTemp(c);
+                          else setViewResult(c);
+                        }} title="Ver resultado"><Icon name="eye" size={14}/></button>
+                        <button style={{ ...btnSm,marginLeft:6 }} onClick={()=>{
+                          if (c._displayType==="temperamento") setViewAnswersTemp(c);
+                          else setViewAnswers(c);
+                        }} title="Ver respostas"><Icon name="feedback" size={14}/></button>
+                        <button style={{ ...btnSm,marginLeft:6,opacity:downloadingId===c._rowKey?.5:1 }} onClick={()=>handleDownload(c)} disabled={downloadingId===c._rowKey} title="Baixar resultado"><Icon name="download" size={14}/></button>
                       </>
                     ) : (
                       <>
@@ -1071,10 +2072,16 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
       {showNew && <NewCandidateModal onClose={()=>setShowNew(false)} onSave={onRefresh} currentUser={currentUser} vagasExistentes={vagasList}/>}
       {viewResult && <ResultModal candidate={viewResult} onClose={()=>setViewResult(null)}/>}
       {viewAnswers && <AnswersModal candidate={viewAnswers} onClose={()=>setViewAnswers(null)}/>}
+      {viewResultTemp && <TemperamentoResultModal candidate={viewResultTemp} onClose={()=>setViewResultTemp(null)}/>}
+      {viewAnswersTemp && <TemperamentoAnswersModal candidate={viewAnswersTemp} onClose={()=>setViewAnswersTemp(null)}/>}
       {deleteC && (
         <Modal onClose={()=>setDeleteC(null)}>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Tem certeza que quer excluir?</div>
-          <div style={{ fontSize:13,color:T.textSec,marginBottom:24 }}>O convite/resultado de <strong>{deleteC.name || "candidato pendente"}</strong> será apagado permanentemente.</div>
+          <div style={{ fontSize:13,color:T.textSec,marginBottom:24 }}>
+            {deleteC._displayType && deleteC.tipo_teste==="ambos"
+              ? <>Isso vai apagar <strong>os dois resultados</strong> (DISC e Temperamento) de <strong>{deleteC.name || "candidato pendente"}</strong>, pois vieram do mesmo link.</>
+              : <>O convite/resultado de <strong>{deleteC.name || "candidato pendente"}</strong> será apagado permanentemente.</>}
+          </div>
           <div style={{ display:"flex",gap:12,justifyContent:"flex-end" }}>
             <button style={btnO} onClick={()=>setDeleteC(null)}>Cancelar</button>
             <button style={{ ...btnP,background:T.danger }} onClick={()=>handleDelete(deleteC)}>Sim, excluir</button>
@@ -1332,7 +2339,7 @@ export default function App() {
 
   // Public flow takes priority over everything else
   if (tokenChecking) return <div style={{ fontFamily:T.font,background:"#F7F5F2",display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh" }}>Carregando...</div>;
-  if (invite) return <CandidateTestPublic invite={invite}/>;
+  if (invite) return invite.tipo_teste==="temperamento" ? <TemperamentoTestPublic invite={invite}/> : invite.tipo_teste==="ambos" ? <CombinedTestPublic invite={invite}/> : <CandidateTestPublic invite={invite}/>;
   if (inviteError) return <InvalidLinkScreen reason={inviteError}/>;
 
   const handleLogin = (user) => { sessionStorage.setItem("disc_session", JSON.stringify(user)); setCurrentUser(user); };
