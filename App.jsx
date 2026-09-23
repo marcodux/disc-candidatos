@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, Fragment } from "react";
 
 // ============================================================
 // SUPABASE CLIENT
@@ -759,12 +759,15 @@ const TemperamentoTestPublic = ({ invite }) => {
 // PUBLIC CANDIDATE TEST FLOW — AMBOS (DISC + Temperamento em sequência)
 // ============================================================
 const CombinedTestPublic = ({ invite }) => {
-  const [step, setStep] = useState("info"); // info | disc | temperamento | done
+  const includeFicha = invite.tipo_teste === "ambos_ficha";
+  const [step, setStep] = useState("info"); // info | disc | temperamento | ficha | done
   const [name, setName] = useState("");
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [fichaData, setFichaData] = useState(emptyFicha());
+  const [fichaError, setFichaError] = useState("");
 
   // DISC state
   const [discQ, setDiscQ] = useState(0);
@@ -869,9 +872,30 @@ const CombinedTestPublic = ({ invite }) => {
     const maioriaParte1 = p1a>=p1b ? "A" : "B";
     const maioriaParte2 = p2a>=p2b ? "A" : "B";
     const perfil = getTemperamentoProfile(maioriaParte1, maioriaParte2);
-    await DB.update("candidates", invite.id, { status:"Respondido", answered_at:new Date().toISOString(), perfil_temperamento:perfil });
+    if (includeFicha) {
+      await DB.update("candidates", invite.id, { perfil_temperamento:perfil });
+    } else {
+      await DB.update("candidates", invite.id, { status:"Respondido", answered_at:new Date().toISOString(), perfil_temperamento:perfil });
+    }
     await DB.insert("temperamento_results", { id:genId(), candidate_id:invite.id, candidate_name:name.trim(), parte1_a:p1a, parte1_b:p1b, parte2_a:p2a, parte2_b:p2b, perfil, answers:answersDetail });
     setTempResultProfile(perfil);
+    setSaving(false);
+    if (includeFicha) {
+      setFichaData(prev => ({ ...prev, nome_completo:name.trim(), cpf }));
+      setStep("ficha");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    else setStep("done");
+  };
+
+  // ---- Ficha logic ----
+  const handleSubmitFicha = async () => {
+    if (!fichaData.nome_completo.trim()) { setFichaError("Informe o nome completo"); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    if (!isValidCpf(fichaData.cpf)) { setFichaError("CPF inválido. Confira os números digitados."); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    setFichaError("");
+    setSaving(true);
+    await DB.insert("fichas_cadastrais", { id:genId(), candidate_id:invite.id, ...fichaData, cpf:cleanCpf(fichaData.cpf) });
+    await DB.update("candidates", invite.id, { status:"Respondido", answered_at:new Date().toISOString() });
     setSaving(false);
     setStep("done");
   };
@@ -1022,7 +1046,7 @@ const CombinedTestPublic = ({ invite }) => {
     );
   }
 
-  // step === "temperamento"
+  if (step === "temperamento") {
   const tChosen = tempAnswers[tKey];
   return (
     <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
@@ -1063,9 +1087,140 @@ const CombinedTestPublic = ({ invite }) => {
           {tempQ<totalTempQ-1?
             <button disabled={!tChosen} onClick={()=>{setTempQ(tempQ+1);window.scrollTo({top:0,behavior:"smooth"});}} style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",opacity:tChosen?1:.3,marginLeft:"auto" }}>Próxima →</button>
             : tempAnswered===totalTempQ?
-              <button onClick={finishTemperamentoPart} disabled={saving} style={{ padding:"14px 36px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#F39C12,#8E44AD)",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",marginLeft:"auto" }}>{saving?"Enviando...":"Finalizar Testes ✦"}</button>
+              <button onClick={finishTemperamentoPart} disabled={saving} style={{ padding:"14px 36px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#F39C12,#8E44AD)",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,cursor:"pointer",marginLeft:"auto" }}>{saving?"Enviando...":includeFicha?"Ir para Ficha Cadastral →":"Finalizar Testes ✦"}</button>
               : <button disabled style={{ padding:"14px 28px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:14,opacity:.3,marginLeft:"auto" }}>Responda todas</button>
           }
+        </div>
+      </div>
+    </div>
+  );
+  }
+
+  if (step === "ficha") {
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+        <div style={{ maxWidth:760,margin:"0 auto" }}>
+          <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+            <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+            <div style={{ fontSize:14,fontWeight:700,color:"#9B9B9B",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6 }}>Última etapa</div>
+            <div style={{ fontSize:30,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Ficha Cadastral</div>
+            <div style={{ color:"#6B6B6B",marginTop:6 }}>{name.trim().split(" ")[0]}, testes concluídos — falta só a ficha</div>
+          </div>
+          {fichaError && <div style={{ background:"#FADBD8",color:"#C0392B",padding:"12px 16px",borderRadius:10,fontSize:14,marginBottom:20,fontWeight:500 }}>{fichaError}</div>}
+          <FichaCadastralForm f={fichaData} setF={setFichaData}/>
+          <div style={{ textAlign:"center",margin:"20px 0 50px" }}>
+            <button onClick={handleSubmitFicha} disabled={saving} style={{ padding:"14px 40px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:15,cursor:"pointer" }}>{saving?"Enviando...":"Enviar Ficha e Finalizar ✦"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+// ============================================================
+// PUBLIC CANDIDATE FLOW — FICHA CADASTRAL
+// ============================================================
+const fcLabel = { display:"block",fontSize:12,fontWeight:600,color:"#6B6B6B",marginBottom:5,textTransform:"uppercase",letterSpacing:".3px" };
+const fcInput = { width:"100%",padding:"11px 14px",border:"1.5px solid #E8E4DF",borderRadius:9,fontSize:14,fontFamily:"inherit",marginBottom:14,boxSizing:"border-box" };
+const fcSection = { background:"#FFF",borderRadius:16,padding:"24px 26px",marginBottom:20,boxShadow:"0 2px 20px rgba(0,0,0,.06)" };
+const fcSectionTitle = { fontSize:16,fontWeight:700,marginBottom:16,color:"#2C2C2C" };
+const fcRow2 = { display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 };
+const fcRow3 = { display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14 };
+
+const FC = ({ label, value, onChange, type="text", placeholder }) => (
+  <div>
+    <label style={fcLabel}>{label}</label>
+    <input style={fcInput} type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder||""}/>
+  </div>
+);
+
+const FichaCadastralForm = ({ f, setF }) => {
+  const set = (k) => (v) => setF({ ...f, [k]: v });
+
+  return (
+    <div style={fcSection}>
+      <div style={fcSectionTitle}>Dados Pessoais</div>
+      <div style={fcRow2}>
+        <FC label="Nome completo *" value={f.nome_completo} onChange={set("nome_completo")}/>
+        <FC label="Data de nascimento" type="date" value={f.data_nascimento} onChange={set("data_nascimento")}/>
+      </div>
+      <div style={fcRow3}>
+        <FC label="RG" value={f.rg} onChange={set("rg")}/>
+        <FC label="Órgão emissor do RG" value={f.orgao_emissor} onChange={set("orgao_emissor")}/>
+        <FC label="Data de emissão do RG" type="date" value={f.data_emissao_rg} onChange={set("data_emissao_rg")}/>
+      </div>
+      <div style={fcRow2}>
+        <FC label="CPF *" value={f.cpf} onChange={v=>setF({...f,cpf:formatCpf(v)})}/>
+        <div>
+          <label style={fcLabel}>Estado civil</label>
+          <select style={fcInput} value={f.estado_civil} onChange={e=>set("estado_civil")(e.target.value)}>
+            <option value="">Selecione</option>
+            <option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option><option>União estável</option>
+          </select>
+        </div>
+      </div>
+      <FC label="Escolaridade" value={f.escolaridade} onChange={set("escolaridade")}/>
+      <div style={fcRow2}>
+        <FC label="Nome do pai" value={f.nome_pai} onChange={set("nome_pai")}/>
+        <FC label="Nome da mãe" value={f.nome_mae} onChange={set("nome_mae")}/>
+      </div>
+    </div>
+  );
+};
+
+const emptyFicha = () => ({
+  nome_completo:"",data_nascimento:"",rg:"",orgao_emissor:"",data_emissao_rg:"",cpf:"",
+  estado_civil:"",escolaridade:"",nome_pai:"",nome_mae:"",
+});
+
+const FichaCadastralPublic = ({ invite, onDone }) => {
+  const [f, setF] = useState(emptyFicha());
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!f.nome_completo.trim()) { setError("Informe o nome completo"); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    if (!isValidCpf(f.cpf)) { setError("CPF inválido. Confira os números digitados."); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    setError("");
+    setSaving(true);
+    await DB.insert("fichas_cadastrais", { id:genId(), candidate_id:invite.id, ...f, cpf:cleanCpf(f.cpf) });
+    if (onDone) {
+      await onDone(f.nome_completo.trim(), f.cpf);
+    } else {
+      await DB.update("candidates", invite.id, { name:f.nome_completo.trim(), cpf:cleanCpf(f.cpf), status:"Respondido", answered_at:new Date().toISOString() });
+    }
+    setSaving(false);
+    setDone(true);
+  };
+
+  if (done) {
+    return (
+      <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20,display:"flex",alignItems:"center",justifyContent:"center" }}>
+        <div style={{ maxWidth:520,textAlign:"center",background:"#FFF",borderRadius:20,padding:"48px 36px",boxShadow:"0 8px 40px rgba(0,0,0,.1)" }}>
+          <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:20,borderRadius:8 }}/>
+          <div style={{ fontSize:26,fontWeight:800,fontFamily:"'Playfair Display',serif",marginBottom:10 }}>Agradecemos a sua participação no nosso processo seletivo!</div>
+          <div style={{ color:"#6B6B6B",fontSize:15,lineHeight:1.6 }}>Sua ficha cadastral foi enviada com sucesso.<br/>Nossa equipe de Recrutamento e Seleção vai analisar suas informações e entrará em contato em breve.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ fontFamily:T.font,background:"#F7F5F2",minHeight:"100vh",padding:20 }}>
+      <div style={{ maxWidth:760,margin:"0 auto" }}>
+        <div style={{ textAlign:"center",padding:"40px 0 20px" }}>
+          <img src={LOGO} alt="Dux Logistics" style={{ height:48,marginBottom:16,borderRadius:8 }}/>
+          <div style={{ fontSize:30,fontWeight:800,fontFamily:"'Playfair Display',serif" }}>Ficha Cadastral</div>
+          <div style={{ color:"#6B6B6B",marginTop:6 }}>Processo seletivo — Dux Logistics</div>
+        </div>
+        {error && <div style={{ background:"#FADBD8",color:"#C0392B",padding:"12px 16px",borderRadius:10,fontSize:14,marginBottom:20,fontWeight:500 }}>{error}</div>}
+        <FichaCadastralForm f={f} setF={setF}/>
+        <div style={{ textAlign:"center",margin:"20px 0 50px" }}>
+          <button onClick={handleSubmit} disabled={saving} style={{ padding:"14px 40px",borderRadius:12,border:"none",background:"#2C2C2C",color:"#FFF",fontFamily:T.font,fontWeight:600,fontSize:15,cursor:"pointer" }}>{saving?"Enviando...":"Enviar Ficha ✦"}</button>
+          <div style={{ fontSize:12,color:"#9B9B9B",marginTop:14 }}>Seus dados serão usados exclusivamente para fins de recrutamento e admissão pela Dux Logistics.</div>
         </div>
       </div>
     </div>
@@ -1223,9 +1378,16 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
   const handleEmail = () => {
     const to = prompt("E-mail do candidato:");
     if (!to) return;
-    const subject = tipoTeste==="temperamento" ? "Teste de Temperamento — Dux Logistics" : tipoTeste==="ambos" ? "Testes de Perfil (DISC + Temperamento) — Dux Logistics" : "Teste de Perfil Comportamental — Dux Logistics";
-    const tempoEstimado = tipoTeste==="ambos" ? "cerca de 20 minutos" : "cerca de 10 minutos";
-    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste (leva ${tempoEstimado}):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
+    const subjects = {
+      temperamento: "Teste de Temperamento — Dux Logistics",
+      ambos: "Testes de Perfil (DISC + Temperamento) — Dux Logistics",
+      ficha: "Ficha Cadastral — Dux Logistics",
+      ambos_ficha: "Testes de Perfil + Ficha Cadastral — Dux Logistics",
+    };
+    const subject = subjects[tipoTeste] || "Teste de Perfil Comportamental — Dux Logistics";
+    const tempos = { ambos:"cerca de 20 minutos", ficha:"cerca de 15 minutos", ambos_ficha:"cerca de 35 minutos" };
+    const tempoEstimado = tempos[tipoTeste] || "cerca de 10 minutos";
+    const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo (leva ${tempoEstimado}):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -1236,11 +1398,17 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Gerar Link para Candidato</div>
           <div style={{ fontSize:13,color:T.textSec,marginBottom:28 }}>O candidato vai informar nome, CPF e e-mail ao abrir o link</div>
           {error && <div style={errBox}>{error}</div>}
-          <label style={labelS}>Qual teste enviar? *</label>
-          <div style={{ display:"flex",gap:10,marginBottom:20 }}>
-            {[{id:"disc",label:"Teste DISC"},{id:"temperamento",label:"Temperamento"},{id:"ambos",label:"Ambos os testes"}].map(t => (
+          <label style={labelS}>O que enviar? *</label>
+          <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20 }}>
+            {[
+              {id:"disc",label:"Teste DISC"},
+              {id:"temperamento",label:"Teste Temperamento"},
+              {id:"ambos",label:"Os dois testes"},
+              {id:"ficha",label:"Ficha Cadastral"},
+              {id:"ambos_ficha",label:"Os dois testes + Ficha"},
+            ].map(t => (
               <button key={t.id} type="button" onClick={()=>setTipoTeste(t.id)}
-                style={{ flex:1,padding:"12px 10px",borderRadius:10,border:`2px solid ${tipoTeste===t.id?T.primary:T.border}`,background:tipoTeste===t.id?T.primaryLight:"#FFF",color:tipoTeste===t.id?T.primary:T.textSec,fontFamily:T.font,fontWeight:600,fontSize:12,cursor:"pointer" }}>
+                style={{ padding:"12px 10px",borderRadius:10,border:`2px solid ${tipoTeste===t.id?T.primary:T.border}`,background:tipoTeste===t.id?T.primaryLight:"#FFF",color:tipoTeste===t.id?T.primary:T.textSec,fontFamily:T.font,fontWeight:600,fontSize:12,cursor:"pointer" }}>
                 {t.label}
               </button>
             ))}
@@ -1263,7 +1431,7 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
       ) : (
         <>
           <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Link gerado! ✅</div>
-          <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>{tipoTeste==="temperamento"?"Teste de Temperamento":tipoTeste==="ambos"?"DISC + Temperamento":"Teste DISC"} — copie o link ou envie direto por e-mail para o candidato</div>
+          <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>{({temperamento:"Teste de Temperamento",ambos:"DISC + Temperamento",ficha:"Ficha Cadastral",ambos_ficha:"DISC + Temperamento + Ficha"})[tipoTeste] || "Teste DISC"} — copie o link ou envie direto por e-mail para o candidato</div>
           <div style={{ background:T.bg,border:`1px solid ${T.border}`,borderRadius:T.radSm,padding:"12px 14px",marginBottom:20,fontSize:13,wordBreak:"break-all",color:T.textSec }}>{link}</div>
           <div style={{ display:"flex",gap:12,marginBottom:12 }}>
             <button style={{ ...btnO,flex:1 }} onClick={handleCopy}>{copied?"Copiado!":"Copiar Link"}</button>
@@ -2129,6 +2297,130 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
 };
 
 // ============================================================
+// MODAL: VIEW FICHA CADASTRAL DETAILS
+// ============================================================
+const fdRow = { display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid #F0EDE7`,fontSize:13,gap:16 };
+const fdLabel = { color:"#9B9B9B",fontWeight:500,flexShrink:0 };
+const fdValue = { color:"#2C2C2C",fontWeight:500,textAlign:"right",wordBreak:"break-word" };
+const fdSectionTitle = { fontSize:13,fontWeight:700,color:T.primary,textTransform:"uppercase",letterSpacing:".5px",marginTop:20,marginBottom:8 };
+const FDRow = ({ label, value }) => (!value ? null : <div style={fdRow}><span style={fdLabel}>{label}</span><span style={fdValue}>{value}</span></div>);
+
+const FichaDetailModal = ({ ficha, candidate, onClose }) => {
+  const f = ficha;
+  return (
+    <Modal onClose={onClose}>
+      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>{f.nome_completo}</div>
+      <div style={{ fontSize:13,color:T.textSec,marginBottom:8 }}>
+        {candidate?.empresa?`${candidate.empresa} • `:""}{candidate?.vaga||""}
+      </div>
+      <div style={{ maxHeight:480,overflowY:"auto",paddingRight:4 }}>
+        <div style={fdSectionTitle}>Dados Pessoais</div>
+        <FDRow label="Data de nascimento" value={f.data_nascimento}/>
+        <FDRow label="RG" value={f.rg}/>
+        <FDRow label="Órgão emissor do RG" value={f.orgao_emissor}/>
+        <FDRow label="Data de emissão do RG" value={f.data_emissao_rg}/>
+        <FDRow label="CPF" value={formatCpf(f.cpf)}/>
+        <FDRow label="Estado civil" value={f.estado_civil}/>
+        <FDRow label="Escolaridade" value={f.escolaridade}/>
+        <FDRow label="Nome do pai" value={f.nome_pai}/>
+        <FDRow label="Nome da mãe" value={f.nome_mae}/>
+      </div>
+      <div style={{ marginTop:20,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
+    </Modal>
+  );
+};
+
+// ============================================================
+// PAGE: FICHA CADASTRAL
+// ============================================================
+const FichasCadastraisPage = ({ fichas, candidates, onRefresh, isAdmin }) => {
+  const [search, setSearch] = useState("");
+  const [filterEmpresa, setFilterEmpresa] = useState("Todas");
+  const [viewFicha, setViewFicha] = useState(null);
+  const [deleteFicha, setDeleteFicha] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  const candidateMap = {};
+  candidates.forEach(c => { candidateMap[c.id] = c; });
+
+  const rows = fichas.map(f => ({ ...f, _candidate: candidateMap[f.candidate_id] || {} }));
+
+  const filtered = rows.filter(r => {
+    if (filterEmpresa !== "Todas" && r._candidate.empresa !== filterEmpresa) return false;
+    if (search.trim() && !(r.nome_completo||"").toLowerCase().includes(search.trim().toLowerCase())) return false;
+    return true;
+  });
+
+  const handleDelete = async (f) => {
+    await DB.delete("fichas_cadastrais", f.id);
+    setDeleteFicha(null);
+    setMsg("Ficha removida");
+    onRefresh();
+    setTimeout(()=>setMsg(""),3000);
+  };
+
+  return (
+    <div>
+      <div style={pageTitle}>Ficha Cadastral</div>
+      <div style={pageSub}>Fichas cadastrais preenchidas pelos candidatos</div>
+      {msg && <div style={{ ...okBox,marginTop:16 }}>{msg}</div>}
+      <div style={{ marginTop:20,marginBottom:20,display:"flex",gap:12,flexWrap:"wrap",alignItems:"center" }}>
+        <input style={{ ...input,width:220,marginBottom:0,padding:"8px 12px",fontSize:13 }}
+          placeholder="Pesquisar por nome..." value={search} onChange={e=>setSearch(e.target.value)} onFocus={focusH} onBlur={blurH}/>
+        <select value={filterEmpresa} onChange={e=>setFilterEmpresa(e.target.value)}
+          style={{ ...select,width:"auto",minWidth:200,marginBottom:0,padding:"8px 12px",fontSize:13 }}>
+          <option value="Todas">Todas as empresas</option>
+          {EMPRESAS_DUX.map(e => <option key={e} value={e}>{e}</option>)}
+        </select>
+      </div>
+      {filtered.length === 0 ? (
+        <div style={{ ...card,textAlign:"center",padding:"60px 20px" }}>
+          <div style={{ fontSize:18,fontWeight:600,marginBottom:8 }}>Nenhuma ficha encontrada</div>
+          <div style={{ color:T.textSec }}>As fichas aparecem aqui assim que forem preenchidas pelos candidatos.</div>
+        </div>
+      ) : (
+        <div style={{ ...card,padding:0,overflow:"hidden" }}>
+          <div style={{ overflowX:"auto" }}>
+          <table style={{ width:"100%",borderCollapse:"separate",borderSpacing:0,minWidth:900 }}>
+            <thead><tr>
+              <th style={thS}>Nome</th><th style={thS}>CPF</th><th style={thS}>Nascimento</th><th style={thS}>Empresa</th><th style={thS}>Vaga</th><th style={thS}>Preenchida em</th><th style={{ ...thS,textAlign:"right" }}>Ações</th>
+            </tr></thead>
+            <tbody>
+              {filtered.map(f => (
+                <tr key={f.id} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceHover} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <td style={{ ...tdS,fontWeight:500 }}>{f.nome_completo}</td>
+                  <td style={tdS}>{f.cpf?formatCpf(f.cpf):"-"}</td>
+                  <td style={tdS}>{f.data_nascimento||"-"}</td>
+                  <td style={tdS}>{f._candidate.empresa ? <span style={badge(f._candidate.empresa)}>{f._candidate.empresa}</span> : "-"}</td>
+                  <td style={tdS}>{f._candidate.vaga||"-"}</td>
+                  <td style={{ ...tdS,fontSize:13,color:T.textSec }}>{fmtDate(f.created_at)}</td>
+                  <td style={{ ...tdS,textAlign:"right" }}>
+                    <button style={btnSm} onClick={()=>setViewFicha(f)} title="Ver ficha"><Icon name="eye" size={14}/></button>
+                    {isAdmin && <button style={{ ...btnD,marginLeft:6 }} onClick={()=>setDeleteFicha(f)} title="Apagar"><Icon name="trash" size={14}/></button>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        </div>
+      )}
+      {viewFicha && <FichaDetailModal ficha={viewFicha} candidate={candidateMap[viewFicha.candidate_id]} onClose={()=>setViewFicha(null)}/>}
+      {deleteFicha && (
+        <Modal onClose={()=>setDeleteFicha(null)}>
+          <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Tem certeza que quer excluir?</div>
+          <div style={{ fontSize:13,color:T.textSec,marginBottom:24 }}>A ficha cadastral de <strong>{deleteFicha.nome_completo}</strong> será apagada permanentemente.</div>
+          <div style={{ display:"flex",gap:12,justifyContent:"flex-end" }}>
+            <button style={btnO} onClick={()=>setDeleteFicha(null)}>Cancelar</button>
+            <button style={{ ...btnP,background:T.danger }} onClick={()=>handleDelete(deleteFicha)}>Sim, excluir</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+// ============================================================
 // PAGE: ANALYSIS
 // ============================================================
 const AnalysisDiscPage = ({ candidates }) => {
@@ -2606,6 +2898,7 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [users, setUsers] = useState([]);
   const [candidates, setCandidates] = useState([]);
+  const [fichas, setFichas] = useState([]);
   const [ready, setReady] = useState(false);
   const [showChangePw, setShowChangePw] = useState(false);
 
@@ -2616,7 +2909,8 @@ export default function App() {
 
   const loadUsers = useCallback(async () => { setUsers(await DB.getAll("users")); },[]);
   const loadCandidates = useCallback(async () => { setCandidates(await DB.getAll("candidates")); },[]);
-  const loadAll = useCallback(async () => { await loadUsers(); await loadCandidates(); },[loadUsers,loadCandidates]);
+  const loadFichas = useCallback(async () => { setFichas(await DB.getAll("fichas_cadastrais")); },[]);
+  const loadAll = useCallback(async () => { await loadUsers(); await loadCandidates(); await loadFichas(); },[loadUsers,loadCandidates,loadFichas]);
 
   useEffect(() => { setReady(true); },[]);
   useEffect(() => { if(currentUser) loadAll(); },[currentUser,loadAll]);
@@ -2637,7 +2931,7 @@ export default function App() {
 
   // Public flow takes priority over everything else
   if (tokenChecking) return <div style={{ fontFamily:T.font,background:"#F7F5F2",display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh" }}>Carregando...</div>;
-  if (invite) return invite.tipo_teste==="temperamento" ? <TemperamentoTestPublic invite={invite}/> : invite.tipo_teste==="ambos" ? <CombinedTestPublic invite={invite}/> : <CandidateTestPublic invite={invite}/>;
+  if (invite) return invite.tipo_teste==="temperamento" ? <TemperamentoTestPublic invite={invite}/> : invite.tipo_teste==="ficha" ? <FichaCadastralPublic invite={invite}/> : (invite.tipo_teste==="ambos" || invite.tipo_teste==="ambos_ficha") ? <CombinedTestPublic invite={invite}/> : <CandidateTestPublic invite={invite}/>;
   if (inviteError) return <InvalidLinkScreen reason={inviteError}/>;
 
   const handleLogin = (user) => { sessionStorage.setItem("disc_session", JSON.stringify(user)); setCurrentUser(user); };
@@ -2650,6 +2944,7 @@ export default function App() {
   const navItems = [
     { id:"dashboard",label:"Dashboard",icon:"home" },
     { id:"candidates",label:"Candidatos",icon:"people" },
+    { id:"fichas",label:"Ficha Cadastral",icon:"feedback" },
     { id:"analysis",label:"Análise DISC",icon:"chart" },
     { id:"analysisTemp",label:"Análise Temperamento",icon:"chart" },
     ...(isAdmin?[{ id:"vagas",label:"Vagas",icon:"edit" }]:[]),
@@ -2685,6 +2980,7 @@ export default function App() {
         <div style={{ flex:1,padding:"40px 48px",overflowY:"auto",maxHeight:"100vh",boxSizing:"border-box" }}>
           {page==="dashboard" && <DashboardPage candidates={candidates}/>}
           {page==="candidates" && <CandidatesPage candidates={candidates} onRefresh={loadAll} currentUser={currentUser} isAdmin={isAdmin}/>}
+          {page==="fichas" && <FichasCadastraisPage fichas={fichas} candidates={candidates} onRefresh={loadAll} isAdmin={isAdmin}/>}
           {page==="analysis" && <AnalysisDiscPage candidates={candidates}/>}
           {page==="analysisTemp" && <AnalysisTemperamentoPage candidates={candidates}/>}
           {page==="vagas" && isAdmin && <VagasPage candidates={candidates} onRefresh={loadAll}/>}
