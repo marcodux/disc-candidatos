@@ -2003,7 +2003,7 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
           <div style={pageSub}>Gere links, acompanhe status e veja os resultados</div>
         </div>
         <div style={{ display:"flex",gap:10 }}>
-          <button style={btnO} onClick={handleExport}>Exportar CSV</button>
+          {isAdmin && <button style={btnO} onClick={handleExport}>Exportar CSV</button>}
           <button style={btnP} onClick={()=>setShowNew(true)}>+ Gerar Link</button>
         </div>
       </div>
