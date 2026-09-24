@@ -278,8 +278,8 @@ const TEMPERAMENTO_PARTE1 = [
   {id:1,a:"Quando você está em um ambiente novo, você tende a explorá-lo completamente.",b:"Tende a ser receoso em novos ambientes"},
   {id:2,a:"Quando alguém lhe ofende de forma inesperada, você já tem uma resposta.",b:"Não reage rapidamente às ofensas inesperadas."},
   {id:3,a:"Para você, é muito fácil emitir sua opinião em meio a um grupo de \"semi-conhecidos\"",b:"Não consegue elaborar uma opinião sem se sentir muito seguro antes."},
-  {id:4,a:"Para você, a comunicação é a oportunidade de se posicionar são imprescindíveis.",b:"Você suporta por um bom tempo quando não pode se posicionar."},
-  {id:5,a:"É muito fácil toma uma atitude em ações em grupo.",b:"Possui dificuldades em tomar decisões em meio a um grupo."},
+  {id:4,a:"Para você, a comunicação e a oportunidade de se posicionar são imprescindíveis.",b:"Você suporta por um bom tempo quando não pode se posicionar."},
+  {id:5,a:"É muito fácil tomar uma atitude em ações em grupo.",b:"Possui dificuldades em tomar decisões em meio a um grupo."},
   {id:6,a:"Você é o primeiro a se manifestar em dinâmicas de grupo.",b:"Você espera que outro dê o primeiro passo em dinâmicas de grupo."},
   {id:7,a:"Você se sente desconfortável vivendo apenas o óbvio e o previsível.",b:"Para você, uma vida previsível e estável é mais confortável."},
   {id:8,a:"Você possui um tom de voz elevado.",b:"Seu tom de voz é mais manso/vacilante/baixo."},
@@ -1455,6 +1455,8 @@ const discColorsMap = {D:"#C0392B",I:"#F39C12",S:"#27AE60",C:"#2980B9"};
 const downloadResultDocument = (candidate, result) => {
   const w = window.open("", "_blank");
   if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
+  const fileDate = (candidate.answered_at ? fmtDate(candidate.answered_at) : fmtDate(new Date().toISOString())).replace(/\//g,"-");
+  const fileTitle = `Resultado DISC - ${candidate.name} - ${fileDate}`;
   const buildProfileBlock = (view) => {
     const scores = view==="mais" ? result.scores_mais : result.scores_menos;
     const winner = view==="mais" ? result.perfil_mais : result.perfil_menos;
@@ -1477,7 +1479,7 @@ const downloadResultDocument = (candidate, result) => {
       </div>`;
   };
   w.document.write(`
-    <html><head><title>Resultado — ${candidate.name}</title>
+    <html><head><title>${fileTitle}</title>
     <meta charset="utf-8"/>
     <style>
       body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
@@ -1635,8 +1637,10 @@ const downloadTemperamentoDocument = (candidate, result) => {
   const w = window.open("", "_blank");
   if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
   const prof = TEMPERAMENTO_PROFILES[result.perfil];
+  const fileDate = (candidate.answered_at ? fmtDate(candidate.answered_at) : fmtDate(new Date().toISOString())).replace(/\//g,"-");
+  const fileTitle = `Resultado Temperamento - ${candidate.name} - ${fileDate}`;
   w.document.write(`
-    <html><head><title>Resultado — ${candidate.name}</title>
+    <html><head><title>${fileTitle}</title>
     <meta charset="utf-8"/>
     <style>
       body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
@@ -1772,252 +1776,6 @@ const TemperamentoResultModal = ({ candidate, onClose }) => {
         {result && <button style={btnP} onClick={()=>downloadTemperamentoDocument(candidate,result)}>Baixar Resultado</button>}
         <button style={btnO} onClick={onClose}>Fechar</button>
       </div>
-    </Modal>
-  );
-};
-
-// ============================================================
-// HELPER: DOWNLOAD COMBINED RESULT (DISC + Temperamento) AS DOCUMENT
-// ============================================================
-const downloadCombinedDocument = (candidate, discResult, tempResult) => {
-  const w = window.open("", "_blank");
-  if (!w) { alert("Permita pop-ups para baixar o documento."); return; }
-  const tprof = TEMPERAMENTO_PROFILES[tempResult.perfil];
-  const buildDiscBlock = (view) => {
-    const scores = view==="mais" ? discResult.scores_mais : discResult.scores_menos;
-    const winner = view==="mais" ? discResult.perfil_mais : discResult.perfil_menos;
-    const prof = DISC_PROFILES[winner];
-    const bars = ["D","I","S","C"].map(k => `
-      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:0 14px;">
-        <div style="width:30px;height:64px;background:#F1EEE9;border-radius:8px;position:relative;overflow:hidden;border:1px solid #E5E0D8;">
-          <div style="position:absolute;bottom:0;left:0;right:0;height:${(scores[k]/25)*100}%;background:${discColorsMap[k]};"></div>
-        </div>
-        <div style="font-weight:700;font-size:12px;color:${discColorsMap[k]};">${k}</div>
-        <div style="font-weight:600;font-size:10px;color:#6B6B6B;">${scores[k]}</div>
-      </div>`).join("");
-    return `
-      <div style="border:1px solid #E5E0D8;border-radius:12px;padding:18px;margin-bottom:12px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:#9B9B9B;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;">${view==="mais"?"O que mais o descreve":"O que menos o descreve"}</div>
-        <div style="width:48px;height:48px;border-radius:12px;background:${prof.color};display:inline-flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">${winner}</div>
-        <div style="font-size:16px;font-weight:700;">${prof.name}</div>
-        <div style="color:#6B6B6B;font-size:11px;margin-bottom:12px;">${prof.sub}</div>
-        <div>${bars}</div>
-      </div>`;
-  };
-  w.document.write(`
-    <html><head><title>Resultado — ${candidate.name}</title>
-    <meta charset="utf-8"/>
-    <style>
-      body{font-family:Arial,Helvetica,sans-serif;color:#2C2C2C;padding:40px;max-width:640px;margin:0 auto;}
-      *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
-      h1{font-size:22px;margin-bottom:4px;}
-      h2{font-size:16px;margin:28px 0 12px;border-top:1px solid #E5E0D8;padding-top:20px;}
-      .sub{color:#6B6B6B;font-size:13px;margin-bottom:24px;}
-      .info{background:#F7F5F2;border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;line-height:1.8;}
-      .info b{display:inline-block;width:110px;color:#6B6B6B;}
-      .profile{border:1px solid #E5E0D8;border-radius:14px;padding:24px;text-align:center;}
-      .circle{width:56px;height:56px;border-radius:16px;background:${tprof.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin-bottom:10px;}
-      .section{text-align:left;margin-top:16px;font-size:12px;line-height:1.6;}
-      .section b{color:${tprof.color};}
-      @media print { body{padding:20px;} }
-    </style>
-    </head><body>
-      <h1>Resultado — Testes de Perfil (DISC + Temperamento)</h1>
-      <div class="sub">Dux Logistics — Processo Seletivo</div>
-      <div class="info">
-        <div><b>Nome:</b> ${candidate.name}</div>
-        <div><b>CPF:</b> ${formatCpf(candidate.cpf)}</div>
-        <div><b>E-mail:</b> ${candidate.email}</div>
-        ${candidate.empresa?`<div><b>Empresa:</b> ${candidate.empresa}</div>`:""}
-        ${candidate.vaga?`<div><b>Vaga:</b> ${candidate.vaga}</div>`:""}
-        <div><b>Respondido em:</b> ${fmtDateTime(candidate.answered_at)}</div>
-      </div>
-      <h2>Teste DISC</h2>
-      ${buildDiscBlock("mais")}
-      ${buildDiscBlock("menos")}
-      <h2>Teste de Temperamento</h2>
-      <div class="profile">
-        <div class="circle">${tprof.nome.charAt(0)}</div>
-        <div style="font-size:18px;font-weight:700;">${tprof.nome}</div>
-        <div style="color:#6B6B6B;font-size:12px;margin-top:6px;">${tprof.resumo}</div>
-        <div class="section"><b>Pontos fortes:</b> ${tprof.fortes}</div>
-        <div class="section"><b>Pontos de atenção:</b> ${tprof.fracos}</div>
-        <div class="section"><b>Necessidades emocionais:</b> ${tprof.necessidades}</div>
-      </div>
-    </body></html>
-  `);
-  w.document.close();
-  setTimeout(() => { w.print(); }, 400);
-};
-
-// ============================================================
-// MODAL: VIEW COMBINED RESULT (DISC + Temperamento)
-// ============================================================
-const CombinedResultModal = ({ candidate, onClose }) => {
-  const [discResult, setDiscResult] = useState(null);
-  const [tempResult, setTempResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("mais");
-
-  useEffect(() => {
-    (async () => {
-      const [dr, tr] = await Promise.all([
-        DB.getByField("disc_results", "candidate_id", candidate.id),
-        DB.getByField("temperamento_results", "candidate_id", candidate.id),
-      ]);
-      setDiscResult(dr);
-      setTempResult(tr);
-      setLoading(false);
-    })();
-  }, [candidate.id]);
-
-  return (
-    <Modal onClose={onClose}>
-      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>{candidate.name}</div>
-      <div style={{ fontSize:13,color:T.textSec,marginBottom:20 }}>
-        CPF: {formatCpf(candidate.cpf)} • {candidate.email}{candidate.empresa?` • ${candidate.empresa}`:""}{candidate.vaga?` • Vaga: ${candidate.vaga}`:""}
-      </div>
-      {loading ? (
-        <div style={{ color:T.textMut,fontSize:14 }}>Carregando resultados...</div>
-      ) : (
-        <>
-          {discResult && (
-            <>
-              <div style={{ fontSize:14,fontWeight:700,marginBottom:10 }}>Teste DISC</div>
-              <div style={{ display:"flex",gap:8,marginBottom:16 }}>
-                {["mais","menos"].map(v => (
-                  <button key={v} onClick={()=>setView(v)} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${view===v?T.primary:T.border}`,background:view===v?T.primaryLight:"transparent",color:view===v?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>
-                    {v==="mais"?"Mais o descreve":"Menos o descreve"}
-                  </button>
-                ))}
-              </div>
-              {(() => {
-                const scores = view==="mais" ? discResult.scores_mais : discResult.scores_menos;
-                const winner = view==="mais" ? discResult.perfil_mais : discResult.perfil_menos;
-                const prof = DISC_PROFILES[winner];
-                return (
-                  <div style={{ background:T.bg,borderRadius:16,padding:24,textAlign:"center",marginBottom:24 }}>
-                    <div style={{ width:60,height:60,borderRadius:16,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:26,fontWeight:800,color:"#fff",marginBottom:10 }}>{winner}</div>
-                    <div style={{ fontSize:18,fontWeight:700 }}>{prof.name}</div>
-                    <div style={{ color:T.textSec,fontSize:12,marginBottom:16 }}>{prof.sub}</div>
-                    <div style={{ display:"flex",justifyContent:"center",gap:14 }}>
-                      {["D","I","S","C"].map(k => (
-                        <div key={k} style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:5 }}>
-                          <div style={{ width:28,height:70,background:"#FFF",borderRadius:6,position:"relative",overflow:"hidden",border:`1px solid ${T.border}` }}>
-                            <div style={{ position:"absolute",bottom:0,left:0,right:0,height:`${(scores[k]/25)*100}%`,background:discColorsMap[k],borderRadius:6 }}/>
-                          </div>
-                          <div style={{ fontWeight:700,fontSize:11,color:discColorsMap[k] }}>{k}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-            </>
-          )}
-          {tempResult && (() => {
-            const prof = TEMPERAMENTO_PROFILES[tempResult.perfil];
-            return (
-              <>
-                <div style={{ fontSize:14,fontWeight:700,marginBottom:10 }}>Teste de Temperamento</div>
-                <div style={{ background:T.bg,borderRadius:16,padding:24,textAlign:"center" }}>
-                  <div style={{ width:60,height:60,borderRadius:16,background:prof.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:800,color:"#fff",marginBottom:10 }}>{prof.nome.charAt(0)}</div>
-                  <div style={{ fontSize:18,fontWeight:700 }}>{prof.nome}</div>
-                  <div style={{ color:T.textSec,fontSize:12 }}>{prof.resumo}</div>
-                </div>
-              </>
-            );
-          })()}
-          {!discResult && !tempResult && <div style={errBox}>Nenhum resultado encontrado.</div>}
-        </>
-      )}
-      <div style={{ marginTop:24,display:"flex",justifyContent:"flex-end",gap:12 }}>
-        {discResult && tempResult && <button style={btnP} onClick={()=>downloadCombinedDocument(candidate,discResult,tempResult)}>Baixar Resultado</button>}
-        <button style={btnO} onClick={onClose}>Fechar</button>
-      </div>
-    </Modal>
-  );
-};
-
-// ============================================================
-// MODAL: VIEW COMBINED ANSWERS (DISC + Temperamento)
-// ============================================================
-const CombinedAnswersModal = ({ candidate, onClose }) => {
-  const [tab, setTab] = useState("disc");
-  const [discResult, setDiscResult] = useState(null);
-  const [tempResult, setTempResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      const [dr, tr] = await Promise.all([
-        DB.getByField("disc_results", "candidate_id", candidate.id),
-        DB.getByField("temperamento_results", "candidate_id", candidate.id),
-      ]);
-      setDiscResult(dr);
-      setTempResult(tr);
-      setLoading(false);
-    })();
-  }, [candidate.id]);
-
-  return (
-    <Modal onClose={onClose}>
-      <div style={{ fontSize:20,fontWeight:700,marginBottom:4 }}>Respostas de {candidate.name}</div>
-      <div style={{ fontSize:13,color:T.textSec,marginBottom:16 }}>Todas as respostas dos dois testes</div>
-      <div style={{ display:"flex",gap:8,marginBottom:16 }}>
-        <button onClick={()=>setTab("disc")} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${tab==="disc"?T.primary:T.border}`,background:tab==="disc"?T.primaryLight:"transparent",color:tab==="disc"?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>Teste DISC</button>
-        <button onClick={()=>setTab("temperamento")} style={{ padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:`1.5px solid ${tab==="temperamento"?T.primary:T.border}`,background:tab==="temperamento"?T.primaryLight:"transparent",color:tab==="temperamento"?T.primary:T.textSec,cursor:"pointer",fontFamily:T.font }}>Teste de Temperamento</button>
-      </div>
-      {loading ? (
-        <div style={{ color:T.textMut,fontSize:14 }}>Carregando...</div>
-      ) : tab==="disc" ? (
-        !discResult || !discResult.answers ? <div style={errBox}>Respostas do DISC não disponíveis.</div> : (
-          <div style={{ maxHeight:400,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
-            {discResult.answers.map((a,i) => (
-              <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
-                <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PERGUNTA {a.id}</div>
-                <div style={{ display:"flex",flexWrap:"wrap",gap:8 }}>
-                  {a.opcoes.map((o,oi) => {
-                    const isMais = a.mais && a.mais.palavra===o.palavra;
-                    const isMenos = a.menos && a.menos.palavra===o.palavra;
-                    return (
-                      <span key={oi} style={{ padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600,
-                        background: isMais?T.successLight:isMenos?T.dangerLight:T.bg,
-                        color: isMais?T.success:isMenos?T.danger:T.textSec,
-                        border:`1px solid ${isMais?T.success:isMenos?T.danger:T.border}` }}>
-                        {o.palavra}{isMais?" ✓ mais":isMenos?" ✗ menos":""}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        )
-      ) : (
-        !tempResult || !tempResult.answers ? <div style={errBox}>Respostas do Temperamento não disponíveis.</div> : (
-          <div style={{ maxHeight:400,overflowY:"auto",display:"flex",flexDirection:"column",gap:10 }}>
-            {tempResult.answers.map((a,i) => (
-              <div key={i} style={{ border:`1px solid ${T.border}`,borderRadius:10,padding:"10px 14px" }}>
-                <div style={{ fontSize:11,color:T.textMut,fontWeight:600,marginBottom:6 }}>PARTE {a.parte} — PERGUNTA {a.id}</div>
-                <div style={{ display:"flex",flexDirection:"column",gap:6 }}>
-                  <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
-                    background:a.escolha==="A"?T.successLight:T.bg, color:a.escolha==="A"?T.success:T.textSec,
-                    border:`1px solid ${a.escolha==="A"?T.success:T.border}` }}>
-                    {a.textoA}{a.escolha==="A"?" ✓":""}
-                  </div>
-                  <div style={{ padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:600,
-                    background:a.escolha==="B"?T.successLight:T.bg, color:a.escolha==="B"?T.success:T.textSec,
-                    border:`1px solid ${a.escolha==="B"?T.success:T.border}` }}>
-                    {a.textoB}{a.escolha==="B"?" ✓":""}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )
-      )}
-      <div style={{ marginTop:20,textAlign:"right" }}><button style={btnO} onClick={onClose}>Fechar</button></div>
     </Modal>
   );
 };
