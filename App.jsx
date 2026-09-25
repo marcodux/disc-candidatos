@@ -1375,7 +1375,7 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
     try { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(()=>setCopied(false),2000); } catch {}
   };
 
-  const handleEmail = () => {
+  const handleEmail = async () => {
     const to = prompt("E-mail do candidato:");
     if (!to) return;
     const subjects = {
@@ -1388,6 +1388,8 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
     const tempos = { ambos:"cerca de 20 minutos", ficha:"cerca de 15 minutos", ambos_ficha:"cerca de 35 minutos" };
     const tempoEstimado = tempos[tipoTeste] || "cerca de 10 minutos";
     const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo (leva ${tempoEstimado}):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
+    await DB.update("candidates", created, { email: to.trim() });
+    onSave();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -1885,12 +1887,20 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
     try { await navigator.clipboard.writeText(link); setMsg("Link copiado!"); setTimeout(()=>setMsg(""),2000); } catch {}
   };
 
-  const emailInviteLink = (c) => {
-    const to = prompt("E-mail do candidato:");
+  const emailInviteLink = async (c) => {
+    const to = prompt("E-mail do candidato:", c.email || "");
     if (!to) return;
     const link = `${window.location.origin}${window.location.pathname}?token=${c.id}`;
-    const subject = c.tipo_teste==="temperamento" ? "Teste de Temperamento — Dux Logistics" : c.tipo_teste==="ambos" ? "Testes de Perfil (DISC + Temperamento) — Dux Logistics" : "Teste de Perfil Comportamental — Dux Logistics";
+    const subjects = {
+      temperamento: "Teste de Temperamento — Dux Logistics",
+      ambos: "Testes de Perfil (DISC + Temperamento) — Dux Logistics",
+      ficha: "Ficha Cadastral — Dux Logistics",
+      ambos_ficha: "Testes de Perfil + Ficha Cadastral — Dux Logistics",
+    };
+    const subject = subjects[c.tipo_teste] || "Teste de Perfil Comportamental — Dux Logistics";
     const body = `Olá,\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nPor favor, acesse o link abaixo para realizar o teste (leva cerca de 10 minutos):\n\n${link}\n\nAtenciosamente,\nEquipe de Recrutamento e Seleção\nDux Logistics`;
+    await DB.update("candidates", c.id, { email: to.trim() });
+    onRefresh();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
