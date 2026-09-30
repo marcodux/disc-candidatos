@@ -359,6 +359,18 @@ const getTemperamentoProfile = (maioriaParte1, maioriaParte2) => {
 // CPF VALIDATION
 // ============================================================
 const cleanCpf = (v) => (v || "").replace(/\D/g, "");
+const buildInviteEmailBody = (tipoTeste, link) => {
+  const frases = {
+    disc: "Nesta etapa, convidamos você a responder ao teste disponível no link abaixo, com duração aproximada de 10 minutos.",
+    temperamento: "Nesta etapa, convidamos você a responder ao teste disponível no link abaixo, com duração aproximada de 10 minutos.",
+    ambos: "Nesta etapa, convidamos você a responder aos testes disponíveis no link abaixo, com duração aproximada de 20 minutos.",
+    ficha: "Nesta etapa, convidamos você a compartilhar as informações no link abaixo, com duração aproximada de 5 minutos.",
+    ambos_ficha: "Nesta etapa, convidamos você a responder aos testes e a compartilhar as informações disponíveis no link abaixo, com duração aproximada de 20 minutos.",
+  };
+  const frase = frases[tipoTeste] || frases.disc;
+  return `Olá! Tudo bem?\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\n${frase}\n\n🔗 ${link}\n\nAgradecemos a sua participação!\n\nAts,\nEquipe de Gente & Cultura\nDux Logistics`;
+};
+
 const formatCpf = (v) => {
   const c = cleanCpf(v).slice(0, 11);
   return c
@@ -1385,9 +1397,7 @@ const NewCandidateModal = ({ onClose, onSave, currentUser, vagasExistentes }) =>
       ambos_ficha: "Testes de Perfil + Ficha Cadastral — Dux Logistics",
     };
     const subject = subjects[tipoTeste] || "Teste de Perfil Comportamental — Dux Logistics";
-    const tempos = { ambos:"20 minutos", ficha:"15 minutos", ambos_ficha:"35 minutos" };
-    const tempoEstimado = tempos[tipoTeste] || "10 minutos";
-    const body = `Olá! Tudo bem?\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nNesta etapa, convidamos você a responder ao teste disponível no link abaixo, com duração aproximada de ${tempoEstimado}.\n\n🔗 ${link}\n\nAgradecemos a sua participação nesta etapa do processo!\n\nAts,\nEquipe de Gente & Cultura\nDux Logistics`;
+    const body = buildInviteEmailBody(tipoTeste, link);
     await DB.update("candidates", created, { email: to.trim() });
     onSave();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -1898,9 +1908,7 @@ const CandidatesPage = ({ candidates, onRefresh, currentUser, isAdmin }) => {
       ambos_ficha: "Testes de Perfil + Ficha Cadastral — Dux Logistics",
     };
     const subject = subjects[c.tipo_teste] || "Teste de Perfil Comportamental — Dux Logistics";
-    const tempos = { ambos:"20 minutos", ficha:"15 minutos", ambos_ficha:"35 minutos" };
-    const tempoEstimado = tempos[c.tipo_teste] || "10 minutos";
-    const body = `Olá! Tudo bem?\n\nVocê está participando do nosso processo seletivo na Dux Logistics.\n\nNesta etapa, convidamos você a responder ao teste disponível no link abaixo, com duração aproximada de ${tempoEstimado}.\n\n🔗 ${link}\n\nAgradecemos a sua participação nesta etapa do processo!\n\nAts,\nEquipe de Gente & Cultura\nDux Logistics`;
+    const body = buildInviteEmailBody(c.tipo_teste, link);
     await DB.update("candidates", c.id, { email: to.trim() });
     onRefresh();
     window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
